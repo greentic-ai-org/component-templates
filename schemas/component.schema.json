@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "title": "component-templates component configuration",
+  "title": "templates component configuration",
   "type": "object",
   "additionalProperties": false,
   "properties": {

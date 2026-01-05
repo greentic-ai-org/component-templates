@@ -44,7 +44,7 @@ fn renders_template_into_payload() {
         "connections": []
     });
 
-    let result = invoke_template("invoke", &invocation.to_string()).expect("invoke");
+    let result = invoke_template("handlebars", &invocation.to_string()).expect("invoke");
     let json: Value = serde_json::from_str(&result).expect("result json");
 
     assert_eq!(json["payload"], json!({ "reply": { "text": "Hi there" } }));
@@ -61,7 +61,7 @@ fn template_error_returns_component_error() {
         "connections": []
     });
 
-    let result = invoke_template("invoke", &invocation.to_string()).expect("invoke");
+    let result = invoke_template("handlebars", &invocation.to_string()).expect("invoke");
     let json: Value = serde_json::from_str(&result).expect("result json");
 
     assert_eq!(json["error"]["kind"], "TemplateError");

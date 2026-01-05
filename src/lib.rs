@@ -184,9 +184,9 @@ fn empty_object() -> Value {
 pub fn describe_payload() -> String {
     json!({
         "component": {
-            "name": "component-templates",
+            "name": "templates",
             "org": "ai.greentic",
-            "version": "0.1.0",
+            "version": "0.1.2",
             "world": "greentic:component/component@0.5.0",
             "schemas": {
                 "component": "schemas/component.schema.json",

@@ -49,28 +49,97 @@
     "required": [
       "template"
     ],
-    "title": "component-templates component configuration",
+    "title": "templates component configuration",
     "type": "object"
   },
+  "default_operation": "handlebars",
   "describe_export": "get-manifest",
+  "dev_flows": {
+    "custom": {
+      "format": "flow-ir-json",
+      "graph": {
+        "description": "Auto-generated custom config for ai.greentic.component-templates",
+        "id": "ai.greentic.component-templates.custom",
+        "kind": "component-config",
+        "nodes": {
+          "ask_config": {
+            "questions": {
+              "fields": [
+                {
+                  "default": "text",
+                  "id": "output_path",
+                  "prompt": "Dot path where the rendered string is stored",
+                  "type": "string"
+                },
+                {
+                  "id": "template",
+                  "prompt": "Handlebars template used to render the reply",
+                  "type": "string"
+                },
+                {
+                  "default": true,
+                  "id": "wrap",
+                  "prompt": "Wrap output in an object when true; emit a raw string when false",
+                  "type": "boolean"
+                }
+              ]
+            },
+            "routing": [
+              {
+                "to": "emit_config"
+              }
+            ]
+          },
+          "emit_config": {
+            "template": "{\n  \"node_id\": \"COMPONENT_STEP\",\n  \"node\": {\n    \"component.exec\": {\n      \"component\": \"ai.greentic.component-templates\",\n      \"operation\": \"handlebars\",\n      \"input\": {\n        \"output_path\": \"{{state.output_path}}\",\n        \"template\": \"{{state.template}}\",\n        \"wrap\": {{state.wrap}}\n      }\n    },\n    \"routing\": [\n      { \"to\": \"NEXT_NODE_PLACEHOLDER\" }\n    ]\n  }\n}"
+          }
+        }
+      }
+    },
+    "default": {
+      "format": "flow-ir-json",
+      "graph": {
+        "description": "Auto-generated default config for ai.greentic.component-templates",
+        "id": "ai.greentic.component-templates.default",
+        "kind": "component-config",
+        "nodes": {
+          "emit_config": {
+            "template": "{\n  \"node_id\": \"COMPONENT_STEP\",\n  \"node\": {\n    \"component.exec\": {\n      \"component\": \"ai.greentic.component-templates\",\n      \"operation\": \"handlebars\",\n      \"input\": {\n      }\n    },\n    \"routing\": [\n      { \"to\": \"NEXT_NODE_PLACEHOLDER\" }\n    ]\n  }\n}"
+          }
+        }
+      }
+    }
+  },
   "hashes": {
-    "component_wasm": "blake3:24f7f608f662995b0767584ae156b3f32beb62919eb71b030ffc2a46617f5bf5"
+    "component_wasm": "blake3:24a8c412efceecabf3ab603017403f1dc968b005a8b72b17d6ff3cfb77b8d9ee"
   },
   "id": "ai.greentic.component-templates",
   "limits": {
     "memory_mb": 128,
     "wall_time_ms": 1000
   },
-  "name": "component-templates",
+  "name": "templates",
+  "operations": [
+    {
+      "input_schema": {
+        "$ref": "schemas/io/input.schema.json"
+      },
+      "name": "handlebars",
+      "output_schema": {
+        "$ref": "schemas/io/output.schema.json"
+      }
+    }
+  ],
   "profiles": {
     "default": "stateless",
     "supported": [
       "stateless"
     ]
   },
+  "secret_requirements": [],
   "supports": [
     "messaging"
   ],
-  "version": "0.1.0",
+  "version": "0.1.2",
   "world": "greentic:component/component@0.5.0"
 }

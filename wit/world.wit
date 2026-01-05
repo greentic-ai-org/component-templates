@@ -1,0 +1,17 @@
+package ai.greentic:component_templates;
+
+/// Component surface and configuration.
+world component {
+    import component: interface {
+        /// Configuration for this component.
+        @config
+        record config {
+            /// Handlebars template used to render the reply.
+            template: string,
+            /// Optional dot path where the rendered string is stored.
+            output-path: option<string>,
+            /// Wrap output in an object; emit a raw string when false.
+            wrap: bool,
+        }
+    }
+}
