@@ -7,11 +7,13 @@ world component {
         @config
         record config {
             /// Handlebars template used to render the reply.
-            template: string,
+            text: string,
             /// Optional dot path where the rendered string is stored.
             output-path: option<string>,
             /// Wrap output in an object; emit a raw string when false.
             wrap: bool,
+            /// Routing target (defaults to out).
+            routing: option<string>,
         }
     }
 }

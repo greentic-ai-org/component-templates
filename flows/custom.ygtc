@@ -5,17 +5,20 @@ nodes:
   ask_config:
     questions:
       fields:
+      - id: text
+        prompt: Handlebars template used to render the reply
+        type: string
       - id: output_path
         prompt: Dot path where the rendered string is stored
         type: string
         default: text
-      - id: template
-        prompt: Handlebars template used to render the reply
-        type: string
       - id: wrap
         prompt: Wrap output in an object when true; emit a raw string when false
         type: boolean
         default: true
+      - id: routing
+        prompt: Routing target (defaults to out)
+        type: string
     routing:
     - to: emit_config
   emit_config:
@@ -23,11 +26,17 @@ nodes:
       {
         "node_id": "COMPONENT_STEP",
         "node": {
-          "tool": {
+          "component.exec": {
             "component": "ai.greentic.component-templates",
-            "output_path": "{{state.output_path}}",
-            "template": "{{state.template}}",
-            "wrap": {{state.wrap}}
+            "operation": "text",
+            "input": {
+              "templates": {
+                "text": "{{state.text}}",
+                "output_path": "{{state.output_path}}",
+                "wrap": {{state.wrap}},
+                "routing": "{{state.routing}}"
+              }
+            }
           },
           "routing": [
             { "to": "NEXT_NODE_PLACEHOLDER" }

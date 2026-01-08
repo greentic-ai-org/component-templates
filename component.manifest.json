@@ -29,30 +29,43 @@
     "$schema": "https://json-schema.org/draft/2020-12/schema",
     "additionalProperties": false,
     "properties": {
-      "output_path": {
-        "default": "text",
-        "description": "Dot path where the rendered string is stored",
-        "type": "string",
-        "x-default-applied": true
-      },
-      "template": {
-        "description": "Handlebars template used to render the reply",
-        "type": "string"
-      },
-      "wrap": {
-        "default": true,
-        "description": "Wrap output in an object when true; emit a raw string when false",
-        "type": "boolean",
-        "x-default-applied": true
+      "templates": {
+        "additionalProperties": false,
+        "properties": {
+          "output_path": {
+            "default": "text",
+            "description": "Dot path where the rendered string is stored",
+            "type": "string",
+            "x-default-applied": true
+          },
+          "routing": {
+            "description": "Optional routing target (defaults to out)",
+            "type": "string"
+          },
+          "text": {
+            "description": "Handlebars template used to render the reply",
+            "type": "string"
+          },
+          "wrap": {
+            "default": true,
+            "description": "Wrap output in an object when true; emit a raw string when false",
+            "type": "boolean",
+            "x-default-applied": true
+          }
+        },
+        "required": [
+          "text"
+        ],
+        "type": "object"
       }
     },
     "required": [
-      "template"
+      "templates"
     ],
     "title": "templates component configuration",
     "type": "object"
   },
-  "default_operation": "handlebars",
+  "default_operation": "text",
   "describe_export": "get-manifest",
   "dev_flows": {
     "custom": {
@@ -65,6 +78,11 @@
           "ask_config": {
             "questions": {
               "fields": [
+                {
+                  "id": "text",
+                  "prompt": "Handlebars template used to render the reply",
+                  "type": "string"
+                },
                 {
                   "default": "text",
                   "id": "output_path",
@@ -81,6 +99,11 @@
                   "id": "wrap",
                   "prompt": "Wrap output in an object when true; emit a raw string when false",
                   "type": "boolean"
+                },
+                {
+                  "id": "routing",
+                  "prompt": "Routing target (defaults to out)",
+                  "type": "string"
                 }
               ]
             },
@@ -91,7 +114,7 @@
             ]
           },
           "emit_config": {
-            "template": "{\n  \"node_id\": \"COMPONENT_STEP\",\n  \"node\": {\n    \"component.exec\": {\n      \"component\": \"ai.greentic.component-templates\",\n      \"operation\": \"handlebars\",\n      \"input\": {\n        \"output_path\": \"{{state.output_path}}\",\n        \"template\": \"{{state.template}}\",\n        \"wrap\": {{state.wrap}}\n      }\n    },\n    \"routing\": [\n      { \"to\": \"NEXT_NODE_PLACEHOLDER\" }\n    ]\n  }\n}"
+            "template": "{\n  \"node_id\": \"COMPONENT_STEP\",\n  \"node\": {\n    \"component.exec\": {\n      \"component\": \"ai.greentic.component-templates\",\n      \"operation\": \"text\",\n      \"input\": {\n        \"templates\": {\n          \"text\": \"{{state.text}}\",\n          \"output_path\": \"{{state.output_path}}\",\n          \"wrap\": {{state.wrap}},\n          \"routing\": \"{{state.routing}}\"\n        }\n      }\n    },\n    \"routing\": [\n      { \"to\": \"NEXT_NODE_PLACEHOLDER\" }\n    ]\n  }\n}"
           }
         }
       }
@@ -104,14 +127,14 @@
         "kind": "component-config",
         "nodes": {
           "emit_config": {
-            "template": "{\n  \"node_id\": \"COMPONENT_STEP\",\n  \"node\": {\n    \"component.exec\": {\n      \"component\": \"ai.greentic.component-templates\",\n      \"operation\": \"handlebars\",\n      \"input\": {\n      }\n    },\n    \"routing\": [\n      { \"to\": \"NEXT_NODE_PLACEHOLDER\" }\n    ]\n  }\n}"
+            "template": "{\n  \"node_id\": \"COMPONENT_STEP\",\n  \"node\": {\n    \"component.exec\": {\n      \"component\": \"ai.greentic.component-templates\",\n      \"operation\": \"text\",\n      \"input\": {\n        \"templates\": {\n          \"text\": \"Hello {{name}}\",\n          \"routing\": \"out\"\n        }\n      }\n    },\n    \"routing\": [\n      { \"to\": \"NEXT_NODE_PLACEHOLDER\" }\n    ]\n  }\n}"
           }
         }
       }
     }
   },
   "hashes": {
-    "component_wasm": "blake3:24a8c412efceecabf3ab603017403f1dc968b005a8b72b17d6ff3cfb77b8d9ee"
+    "component_wasm": "blake3:2f8fc13f771fba245dc36650908968a141c2ab5a1571701c848f08cfe1746d04"
   },
   "id": "ai.greentic.component-templates",
   "limits": {
@@ -124,7 +147,7 @@
       "input_schema": {
         "$ref": "schemas/io/input.schema.json"
       },
-      "name": "handlebars",
+      "name": "text",
       "output_schema": {
         "$ref": "schemas/io/output.schema.json"
       }

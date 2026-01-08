@@ -37,14 +37,14 @@ fn describe_mentions_world() {
 #[test]
 fn renders_template_into_payload() {
     let invocation = json!({
-        "config": { "template": "Hi {{payload.text}}", "output_path": "reply.text" },
+        "config": { "templates": { "text": "Hi {{payload.text}}", "output_path": "reply.text" } },
         "msg": sample_msg(),
         "payload": { "text": "there" },
         "state": { "user": { "name": "alice" } },
         "connections": []
     });
 
-    let result = invoke_template("handlebars", &invocation.to_string()).expect("invoke");
+    let result = invoke_template("text", &invocation.to_string()).expect("invoke");
     let json: Value = serde_json::from_str(&result).expect("result json");
 
     assert_eq!(json["payload"], json!({ "reply": { "text": "Hi there" } }));
@@ -54,14 +54,14 @@ fn renders_template_into_payload() {
 #[test]
 fn template_error_returns_component_error() {
     let invocation = json!({
-        "config": { "template": "{{#if}}" },
+        "config": { "templates": { "text": "{{#if}}" } },
         "msg": sample_msg(),
         "payload": {},
         "state": {},
         "connections": []
     });
 
-    let result = invoke_template("handlebars", &invocation.to_string()).expect("invoke");
+    let result = invoke_template("text", &invocation.to_string()).expect("invoke");
     let json: Value = serde_json::from_str(&result).expect("result json");
 
     assert_eq!(json["error"]["kind"], "TemplateError");

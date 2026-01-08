@@ -5,7 +5,22 @@
   "properties": {
     "config": {
       "type": "object",
-      "description": "Template configuration (see component schema)"
+      "description": "Template configuration (see component schema)",
+      "properties": {
+        "templates": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "text": { "type": "string" },
+            "output_path": { "type": "string" },
+            "wrap": { "type": "boolean" },
+            "routing": { "type": "string" }
+          },
+          "required": ["text"]
+        }
+      },
+      "required": ["templates"],
+      "additionalProperties": false
     },
     "msg": {
       "type": "object",

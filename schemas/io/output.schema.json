@@ -9,7 +9,10 @@
     },
     "control": {
       "type": "object",
-      "description": "Optional control routing payload (unused by this component)",
+      "description": "Optional control routing payload (routing target defaults to out)",
+      "properties": {
+        "routing": { "type": "string" }
+      },
       "additionalProperties": true
     },
     "error": {

@@ -7,8 +7,15 @@ nodes:
       {
         "node_id": "COMPONENT_STEP",
         "node": {
-          "tool": {
-            "component": "ai.greentic.component-templates"
+          "component.exec": {
+            "component": "ai.greentic.component-templates",
+            "operation": "text",
+            "input": {
+              "templates": {
+                "text": "Hello {{name}}",
+                "routing": "out"
+              }
+            }
           },
           "routing": [
             { "to": "NEXT_NODE_PLACEHOLDER" }
