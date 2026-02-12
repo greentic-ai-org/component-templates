@@ -1,9 +1,9 @@
 [package]
 name = "component-templates"
-version = "0.1.7"
+version = "0.1.8"
 edition = "2024"
 license = "MIT"
-rust-version = "1.89"
+rust-version = "1.90"
 description = "Greentic component component-templates"
 repository = "https://github.com/component-templates"
 authors = ["maarten"]
