@@ -1,6 +1,6 @@
 [package]
 name = "component-templates"
-version = "0.1.10"
+version = "0.1.11"
 edition = "2024"
 license = "MIT"
 rust-version = "1.90"
@@ -30,4 +30,4 @@ wit-bindgen = "0.53"
 serde_json = "1"
 
 [target.'cfg(target_arch = "wasm32")'.dependencies]
-greentic-interfaces-guest = { version = "0.4.93", default-features = false, features = ["component-v0-6"] }
+greentic-interfaces-guest = { version = "0.4", default-features = false, features = ["component-v0-6"] }

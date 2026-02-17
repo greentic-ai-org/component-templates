@@ -116,7 +116,7 @@ dependencies = [
 
 [[package]]
 name = "component-templates"
-version = "0.1.10"
+version = "0.1.11"
 dependencies = [
  "ciborium",
  "greentic-interfaces-guest",
