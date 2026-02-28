@@ -1,0 +1,11 @@
+{
+  "component.display_name": "Mallid",
+  "component.operation.text": "Renderda malli tekst",
+  "errors.invalid_input": "Vigane sisendandmestik",
+  "errors.missing_scope": "Puuduvad ulatuse identifikaatorid (tenant/env/session)",
+  "errors.template_render": "Malli renderdamine ebaõnnestus",
+  "errors.unsupported_operation": "toiming `{operation}` ei ole toetatud; kasuta `{supported}`",
+  "qa.text.default": "Tere {{name}}",
+  "qa.text.label": "Malli tekst",
+  "qa.title": "Mallide konfiguratsioon"
+}

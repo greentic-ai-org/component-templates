@@ -1,0 +1,11 @@
+{
+  "component.display_name": "Șabloane",
+  "component.operation.text": "Redă textul șablonului",
+  "errors.invalid_input": "Payload de intrare invalid",
+  "errors.missing_scope": "Lipsesc identificatorii de scope (tenant/env/session)",
+  "errors.template_render": "Redarea șablonului a eșuat",
+  "errors.unsupported_operation": "operation `{operation}` nu este suportată; folosește `{supported}`",
+  "qa.text.default": "Salut {{name}}",
+  "qa.text.label": "Textul șablonului",
+  "qa.title": "Configurarea șabloanelor"
+}

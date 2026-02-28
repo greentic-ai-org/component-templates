@@ -1,0 +1,11 @@
+{
+  "component.display_name": "Szablony",
+  "component.operation.text": "Renderuj tekst szablonu",
+  "errors.invalid_input": "Nieprawidłowe dane wejściowe",
+  "errors.missing_scope": "Brak identyfikatorów zakresu (tenant/env/session)",
+  "errors.template_render": "Renderowanie szablonu nie powiodło się",
+  "errors.unsupported_operation": "operacja `{operation}` nie jest obsługiwana; użyj `{supported}`",
+  "qa.text.default": "Cześć {{name}}",
+  "qa.text.label": "Tekst szablonu",
+  "qa.title": "Konfiguracja szablonów"
+}

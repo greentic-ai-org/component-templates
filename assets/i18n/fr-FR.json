@@ -1,0 +1,11 @@
+{
+  "component.display_name": "Modèles",
+  "component.operation.text": "Rendre le texte du modèle",
+  "errors.invalid_input": "Charge utile d'entrée invalide",
+  "errors.missing_scope": "Identifiants de portée manquants (tenant/env/session)",
+  "errors.template_render": "Le rendu du modèle a échoué",
+  "errors.unsupported_operation": "l'opération `{operation}` n'est pas prise en charge ; utilisez `{supported}`",
+  "qa.text.default": "Bonjour {{name}}",
+  "qa.text.label": "Texte du modèle",
+  "qa.title": "Configuration des modèles"
+}

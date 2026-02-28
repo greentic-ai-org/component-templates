@@ -1,0 +1,11 @@
+{
+  "component.display_name": "Skabeloner",
+  "component.operation.text": "Gengiv skabelontekst",
+  "errors.invalid_input": "Ugyldig input-payload",
+  "errors.missing_scope": "Manglende scope-identifikatorer (tenant/env/session)",
+  "errors.template_render": "Skabelongengivelse mislykkedes",
+  "errors.unsupported_operation": "operation `{operation}` er ikke understøttet; brug `{supported}`",
+  "qa.text.default": "Hej {{name}}",
+  "qa.text.label": "Skabelontekst",
+  "qa.title": "Konfiguration af skabeloner"
+}

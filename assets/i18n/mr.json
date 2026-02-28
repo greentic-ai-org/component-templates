@@ -1,0 +1,11 @@
+{
+  "component.display_name": "टेम्पलेट्स",
+  "component.operation.text": "टेम्पलेट मजकूर रेंडर करा",
+  "errors.invalid_input": "अवैध इनपुट पेलोड",
+  "errors.missing_scope": "स्कोप ओळखचिन्हे गहाळ आहेत (tenant/env/session)",
+  "errors.template_render": "टेम्पलेट रेंडरिंग अयशस्वी झाले",
+  "errors.unsupported_operation": "ऑपरेशन `{operation}` समर्थित नाही; `{supported}` वापरा",
+  "qa.text.default": "नमस्कार {{name}}",
+  "qa.text.label": "टेम्पलेट मजकूर",
+  "qa.title": "टेम्पलेट्स कॉन्फिगरेशन"
+}

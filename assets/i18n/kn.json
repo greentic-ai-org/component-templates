@@ -1,0 +1,11 @@
+{
+  "component.display_name": "ಟೆಂಪ್ಲೇಟ್‌ಗಳು",
+  "component.operation.text": "ಟೆಂಪ್ಲೇಟ್ ಪಠ್ಯವನ್ನು ರೆಂಡರ್ ಮಾಡಿ",
+  "errors.invalid_input": "ಅಮಾನ್ಯ ಇನ್‌ಪುಟ್ ಪೇಲೋಡ್",
+  "errors.missing_scope": "ಸ್ಕೋಪ್ ಗುರುತಿಗಳು ಕಾಣೆಯಾಗಿವೆ (tenant/env/session)",
+  "errors.template_render": "ಟೆಂಪ್ಲೇಟ್ ರೆಂಡರಿಂಗ್ ವಿಫಲವಾಗಿದೆ",
+  "errors.unsupported_operation": "operation `{operation}` ಬೆಂಬಲಿಸಲಾಗುವುದಿಲ್ಲ; `{supported}` ಬಳಸಿ",
+  "qa.text.default": "ನಮಸ್ಕಾರ {{name}}",
+  "qa.text.label": "ಟೆಂಪ್ಲೇಟ್ ಪಠ್ಯ",
+  "qa.title": "ಟೆಂಪ್ಲೇಟ್‌ಗಳ ಸಂರಚನೆ"
+}

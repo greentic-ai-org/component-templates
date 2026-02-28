@@ -1,0 +1,11 @@
+{
+  "component.display_name": "템플릿",
+  "component.operation.text": "템플릿 텍스트 렌더링",
+  "errors.invalid_input": "잘못된 입력 페이로드",
+  "errors.missing_scope": "범위 식별자 누락(tenant/env/session)",
+  "errors.template_render": "템플릿 렌더링 실패",
+  "errors.unsupported_operation": "작업 `{operation}`은(는) 지원되지 않습니다. `{supported}`을(를) 사용하세요",
+  "qa.text.default": "안녕하세요 {{name}}",
+  "qa.text.label": "템플릿 텍스트",
+  "qa.title": "템플릿 구성"
+}

@@ -1,0 +1,11 @@
+{
+  "component.display_name": "Šablonai",
+  "component.operation.text": "Atvaizduoti šablono tekstą",
+  "errors.invalid_input": "Neteisingas įvesties turinys",
+  "errors.missing_scope": "Trūksta srities identifikatorių (tenant/env/session)",
+  "errors.template_render": "Šablono atvaizdavimas nepavyko",
+  "errors.unsupported_operation": "operacija `{operation}` nepalaikoma; naudokite `{supported}`",
+  "qa.text.default": "Sveiki {{name}}",
+  "qa.text.label": "Šablono tekstas",
+  "qa.title": "Šablonų konfigūracija"
+}

@@ -1,0 +1,11 @@
+{
+  "component.display_name": "Templat",
+  "component.operation.text": "Render teks templat",
+  "errors.invalid_input": "Payload input tidak valid",
+  "errors.missing_scope": "Pengidentifikasi cakupan tidak ada (tenant/env/session)",
+  "errors.template_render": "Gagal merender templat",
+  "errors.unsupported_operation": "operasi `{operation}` tidak didukung; gunakan `{supported}`",
+  "qa.text.default": "Halo {{name}}",
+  "qa.text.label": "Teks templat",
+  "qa.title": "Konfigurasi templat"
+}

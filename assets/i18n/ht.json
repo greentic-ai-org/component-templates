@@ -1,0 +1,11 @@
+{
+  "component.display_name": "Modèl",
+  "component.operation.text": "Rann tèks modèl la",
+  "errors.invalid_input": "Chaj done antre a pa valab",
+  "errors.missing_scope": "Idantifyan scope yo manke (tenant/env/session)",
+  "errors.template_render": "Rann modèl la echwe",
+  "errors.unsupported_operation": "operasyon `{operation}` pa sipòte; itilize `{supported}`",
+  "qa.text.default": "Bonjou {{name}}",
+  "qa.text.label": "Tèks modèl",
+  "qa.title": "Konfigirasyon modèl yo"
+}

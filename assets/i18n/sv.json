@@ -1,0 +1,11 @@
+{
+  "component.display_name": "Mallar",
+  "component.operation.text": "Rendera malltext",
+  "errors.invalid_input": "Ogiltig indata-payload",
+  "errors.missing_scope": "Saknade scope-identifierare (tenant/env/session)",
+  "errors.template_render": "Mallrendering misslyckades",
+  "errors.unsupported_operation": "operation `{operation}` stöds inte; använd `{supported}`",
+  "qa.text.default": "Hej {{name}}",
+  "qa.text.label": "Malltext",
+  "qa.title": "Konfiguration för mallar"
+}

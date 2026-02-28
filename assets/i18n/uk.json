@@ -1,0 +1,11 @@
+{
+  "component.display_name": "Шаблони",
+  "component.operation.text": "Рендерити текст шаблону",
+  "errors.invalid_input": "Недійсне вхідне навантаження",
+  "errors.missing_scope": "Відсутні ідентифікатори області (tenant/env/session)",
+  "errors.template_render": "Не вдалося відрендерити шаблон",
+  "errors.unsupported_operation": "операція `{operation}` не підтримується; використовуйте `{supported}`",
+  "qa.text.default": "Привіт {{name}}",
+  "qa.text.label": "Текст шаблону",
+  "qa.title": "Конфігурація шаблонів"
+}

@@ -1,0 +1,11 @@
+{
+  "component.display_name": "တမ်းပလိတ်များ",
+  "component.operation.text": "တမ်းပလိတ် စာသားကို ရန်ဒါလုပ်ရန်",
+  "errors.invalid_input": "မမှန်ကန်သော input payload",
+  "errors.missing_scope": "scope သတ်မှတ်ချက်များ မရှိပါ (tenant/env/session)",
+  "errors.template_render": "တမ်းပလိတ် ရန်ဒါလုပ်ခြင်း မအောင်မြင်ပါ",
+  "errors.unsupported_operation": "operation `{operation}` ကို မပံ့ပိုးပါ; `{supported}` ကို အသုံးပြုပါ",
+  "qa.text.default": "မင်္ဂလာပါ {{name}}",
+  "qa.text.label": "တမ်းပလိတ် စာသား",
+  "qa.title": "တမ်းပလိတ်များ အပြင်အဆင်"
+}

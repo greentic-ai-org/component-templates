@@ -1,0 +1,11 @@
+{
+  "component.display_name": "Mallit",
+  "component.operation.text": "Renderöi mallin teksti",
+  "errors.invalid_input": "Virheellinen syötekuorma",
+  "errors.missing_scope": "Puuttuvat laajuuden tunnisteet (tenant/env/session)",
+  "errors.template_render": "Mallin renderöinti epäonnistui",
+  "errors.unsupported_operation": "toimintoa `{operation}` ei tueta; käytä `{supported}`",
+  "qa.text.default": "Hei {{name}}",
+  "qa.text.label": "Mallin teksti",
+  "qa.title": "Mallien asetukset"
+}

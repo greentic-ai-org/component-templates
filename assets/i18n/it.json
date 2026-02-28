@@ -1,0 +1,11 @@
+{
+  "component.display_name": "Template",
+  "component.operation.text": "Renderizza il testo del template",
+  "errors.invalid_input": "Payload di input non valido",
+  "errors.missing_scope": "Identificatori di ambito mancanti (tenant/env/session)",
+  "errors.template_render": "Rendering del template non riuscito",
+  "errors.unsupported_operation": "l'operazione `{operation}` non è supportata; usa `{supported}`",
+  "qa.text.default": "Ciao {{name}}",
+  "qa.text.label": "Testo del template",
+  "qa.title": "Configurazione dei template"
+}

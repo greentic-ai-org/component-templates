@@ -1,0 +1,11 @@
+{
+  "component.display_name": "සැකිලි",
+  "component.operation.text": "සැකිලි පෙළ රෙන්ඩර් කරන්න",
+  "errors.invalid_input": "වලංගු නොවන ආදාන පැකේජය",
+  "errors.missing_scope": "අදාල පරාස හඳුනාගැනීම් නැත (tenant/env/session)",
+  "errors.template_render": "සැකිලි රෙන්ඩර් කිරීම අසාර්ථක විය",
+  "errors.unsupported_operation": "ක්‍රියාව `{operation}` සහාය නොදක්වයි; `{supported}` භාවිතා කරන්න",
+  "qa.text.default": "හෙලෝ {{name}}",
+  "qa.text.label": "සැකිලි පෙළ",
+  "qa.title": "සැකිලි වින්‍යාසය"
+}

@@ -1,0 +1,11 @@
+{
+  "component.display_name": "टेम्प्लेटहरू",
+  "component.operation.text": "टेम्प्लेट पाठ रेन्डर गर्नुहोस्",
+  "errors.invalid_input": "अवैध इनपुट पेलोड",
+  "errors.missing_scope": "स्कोप पहिचानकर्ताहरू हराइरहेका छन् (tenant/env/session)",
+  "errors.template_render": "टेम्प्लेट रेन्डरिङ असफल भयो",
+  "errors.unsupported_operation": "अपरेसन `{operation}` समर्थित छैन; `{supported}` प्रयोग गर्नुहोस्",
+  "qa.text.default": "नमस्ते {{name}}",
+  "qa.text.label": "टेम्प्लेट पाठ",
+  "qa.title": "टेम्प्लेटहरूको कन्फिगरेसन"
+}

@@ -1,0 +1,11 @@
+{
+  "component.display_name": "Modelos",
+  "component.operation.text": "Renderizar texto do template",
+  "errors.invalid_input": "Carga de entrada inválida",
+  "errors.missing_scope": "Identificadores de escopo ausentes (tenant/env/session)",
+  "errors.template_render": "Falha na renderização do template",
+  "errors.unsupported_operation": "a operação `{operation}` não é suportada; use `{supported}`",
+  "qa.text.default": "Olá {{name}}",
+  "qa.text.label": "Texto do template",
+  "qa.title": "Configuração de modelos"
+}

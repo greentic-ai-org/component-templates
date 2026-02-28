@@ -1,0 +1,11 @@
+{
+  "component.display_name": "เทมเพลต",
+  "component.operation.text": "เรนเดอร์ข้อความเทมเพลต",
+  "errors.invalid_input": "เพย์โหลดอินพุตไม่ถูกต้อง",
+  "errors.missing_scope": "ไม่มีตัวระบุสโคป (tenant/env/session)",
+  "errors.template_render": "การเรนเดอร์เทมเพลตล้มเหลว",
+  "errors.unsupported_operation": "ไม่รองรับ operation `{operation}`; ให้ใช้ `{supported}`",
+  "qa.text.default": "สวัสดี {{name}}",
+  "qa.text.label": "ข้อความเทมเพลต",
+  "qa.title": "การกำหนดค่าเทมเพลต"
+}

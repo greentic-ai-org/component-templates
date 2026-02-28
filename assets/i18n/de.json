@@ -1,0 +1,11 @@
+{
+  "component.display_name": "Vorlagen",
+  "component.operation.text": "Vorlagentext rendern",
+  "errors.invalid_input": "Ungültige Eingabenutzlast",
+  "errors.missing_scope": "Fehlende Scope-Identifikatoren (tenant/env/session)",
+  "errors.template_render": "Vorlagen-Rendering fehlgeschlagen",
+  "errors.unsupported_operation": "Operation `{operation}` wird nicht unterstützt; verwenden Sie `{supported}`",
+  "qa.text.default": "Hallo {{name}}",
+  "qa.text.label": "Vorlagentext",
+  "qa.title": "Vorlagenkonfiguration"
+}

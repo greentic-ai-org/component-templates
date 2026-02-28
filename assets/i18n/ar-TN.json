@@ -1,0 +1,11 @@
+{
+  "component.display_name": "القوالب",
+  "component.operation.text": "عرض نص القالب",
+  "errors.invalid_input": "حمولة الإدخال غير صالحة",
+  "errors.missing_scope": "معرّفات النطاق مفقودة (tenant/env/session)",
+  "errors.template_render": "فشل عرض القالب",
+  "errors.unsupported_operation": "العملية `{operation}` غير مدعومة؛ استخدم `{supported}`",
+  "qa.text.default": "مرحبًا {{name}}",
+  "qa.text.label": "نص القالب",
+  "qa.title": "إعدادات القوالب"
+}

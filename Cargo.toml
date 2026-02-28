@@ -1,9 +1,9 @@
 [package]
 name = "component-templates"
-version = "0.1.11"
+version = "0.1.12"
 edition = "2024"
 license = "MIT"
-rust-version = "1.90"
+rust-version = "1.91"
 description = "Greentic component component-templates"
 repository = "https://github.com/component-templates"
 authors = ["maarten"]
@@ -22,11 +22,14 @@ world = "component-v0-v6-v0"
 handlebars = "6"
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
-greentic-types = { version = "0.4.49" }
+greentic-types = { version = "0.4" }
 ciborium = "0.2"
 wit-bindgen = "0.53"
 
 [dev-dependencies]
+serde_json = "1"
+
+[build-dependencies]
 serde_json = "1"
 
 [target.'cfg(target_arch = "wasm32")'.dependencies]

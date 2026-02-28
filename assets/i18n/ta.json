@@ -1,0 +1,11 @@
+{
+  "component.display_name": "டெம்ப்ளேட்கள்",
+  "component.operation.text": "டெம்ப்ளேட் உரையை ரெண்டர் செய்",
+  "errors.invalid_input": "தவறான உள்ளீட்டு பேலோடு",
+  "errors.missing_scope": "ஸ்கோப் அடையாளங்கள் இல்லை (tenant/env/session)",
+  "errors.template_render": "டெம்ப்ளேட் ரெண்டரிங் தோல்வியடைந்தது",
+  "errors.unsupported_operation": "செயல்பாடு `{operation}` ஆதரிக்கப்படவில்லை; `{supported}` பயன்படுத்தவும்",
+  "qa.text.default": "வணக்கம் {{name}}",
+  "qa.text.label": "டெம்ப்ளேட் உரை",
+  "qa.title": "டெம்ப்ளேட்கள் கட்டமைப்பு"
+}

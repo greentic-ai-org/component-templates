@@ -1,0 +1,11 @@
+{
+  "component.display_name": "Шаблони",
+  "component.operation.text": "Рендериране на текст на шаблон",
+  "errors.invalid_input": "Невалиден входен пакет от данни",
+  "errors.missing_scope": "Липсват идентификатори на обхват (tenant/env/session)",
+  "errors.template_render": "Рендерирането на шаблона е неуспешно",
+  "errors.unsupported_operation": "операцията `{operation}` не се поддържа; използвайте `{supported}`",
+  "qa.text.default": "Здравей, {{name}}",
+  "qa.text.label": "Текст на шаблон",
+  "qa.title": "Конфигурация на шаблони"
+}

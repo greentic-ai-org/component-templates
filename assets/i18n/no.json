@@ -1,0 +1,11 @@
+{
+  "component.display_name": "Maler",
+  "component.operation.text": "Gjengi maltekst",
+  "errors.invalid_input": "Ugyldig inndata",
+  "errors.missing_scope": "Mangler scope-identifikatorer (tenant/env/session)",
+  "errors.template_render": "Malgjengivelse mislyktes",
+  "errors.unsupported_operation": "operasjon `{operation}` støttes ikke; bruk `{supported}`",
+  "qa.text.default": "Hei {{name}}",
+  "qa.text.label": "Maltekst",
+  "qa.title": "Malkonfigurasjon"
+}

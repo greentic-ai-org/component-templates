@@ -1,0 +1,11 @@
+{
+  "component.display_name": "Veidnes",
+  "component.operation.text": "Atveidot veidnes tekstu",
+  "errors.invalid_input": "Nederīgs ievades saturs",
+  "errors.missing_scope": "Trūkst tvēruma identifikatoru (tenant/env/session)",
+  "errors.template_render": "Veidnes atveidošana neizdevās",
+  "errors.unsupported_operation": "darbība `{operation}` netiek atbalstīta; izmantojiet `{supported}`",
+  "qa.text.default": "Sveiki, {{name}}",
+  "qa.text.label": "Veidnes teksts",
+  "qa.title": "Veidņu konfigurācija"
+}

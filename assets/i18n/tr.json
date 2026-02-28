@@ -1,0 +1,11 @@
+{
+  "component.display_name": "Şablonlar",
+  "component.operation.text": "Şablon metnini oluştur",
+  "errors.invalid_input": "Geçersiz girdi yükü",
+  "errors.missing_scope": "Kapsam tanımlayıcıları eksik (tenant/env/session)",
+  "errors.template_render": "Şablon oluşturma başarısız oldu",
+  "errors.unsupported_operation": "işlem `{operation}` desteklenmiyor; `{supported}` kullanın",
+  "qa.text.default": "Merhaba {{name}}",
+  "qa.text.label": "Şablon metni",
+  "qa.title": "Şablonlar yapılandırması"
+}

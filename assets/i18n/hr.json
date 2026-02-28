@@ -1,0 +1,11 @@
+{
+  "component.display_name": "Predlošci",
+  "component.operation.text": "Renderiraj tekst predloška",
+  "errors.invalid_input": "Nevažeći ulazni sadržaj",
+  "errors.missing_scope": "Nedostaju identifikatori opsega (tenant/env/session)",
+  "errors.template_render": "Renderiranje predloška nije uspjelo",
+  "errors.unsupported_operation": "operacija `{operation}` nije podržana; koristite `{supported}`",
+  "qa.text.default": "Pozdrav {{name}}",
+  "qa.text.label": "Tekst predloška",
+  "qa.title": "Konfiguracija predložaka"
+}

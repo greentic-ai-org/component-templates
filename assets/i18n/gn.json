@@ -1,0 +1,11 @@
+{
+  "component.display_name": "Plantilla-kuéra",
+  "component.operation.text": "Emoheñói plantilla jehaipyre",
+  "errors.invalid_input": "Jeike hag̃ua mba'ekuaarã ndoikói",
+  "errors.missing_scope": "Oĩ'ỹ scope jehechakuaaha (tenant/env/session)",
+  "errors.template_render": "Ojavy plantilla ñemoheñói",
+  "errors.unsupported_operation": "operación `{operation}` ndojejokupytýi; eipuru `{supported}`",
+  "qa.text.default": "Mba'éichapa {{name}}",
+  "qa.text.label": "Plantilla jehaipyre",
+  "qa.title": "Plantilla-kuéra ñemboheko"
+}

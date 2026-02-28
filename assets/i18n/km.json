@@ -1,0 +1,11 @@
+{
+  "component.display_name": "គំរូ",
+  "component.operation.text": "បង្ហាញអត្ថបទគំរូ",
+  "errors.invalid_input": "ទិន្នន័យបញ្ចូលមិនត្រឹមត្រូវ",
+  "errors.missing_scope": "បាត់អត្តសញ្ញាណ scope (tenant/env/session)",
+  "errors.template_render": "ការបង្ហាញគំរូបរាជ័យ",
+  "errors.unsupported_operation": "operation `{operation}` មិនត្រូវបានគាំទ្រ; សូមប្រើ `{supported}`",
+  "qa.text.default": "សួស្តី {{name}}",
+  "qa.text.label": "អត្ថបទគំរូ",
+  "qa.title": "ការកំណត់រចនាសម្ព័ន្ធគំរូ"
+}

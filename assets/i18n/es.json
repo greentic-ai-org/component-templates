@@ -1,0 +1,11 @@
+{
+  "component.display_name": "Plantillas",
+  "component.operation.text": "Renderizar texto de plantilla",
+  "errors.invalid_input": "Carga útil de entrada no válida",
+  "errors.missing_scope": "Faltan identificadores de alcance (tenant/env/session)",
+  "errors.template_render": "Error al renderizar la plantilla",
+  "errors.unsupported_operation": "la operación `{operation}` no es compatible; usa `{supported}`",
+  "qa.text.default": "Hola {{name}}",
+  "qa.text.label": "Texto de plantilla",
+  "qa.title": "Configuración de plantillas"
+}

@@ -1,0 +1,11 @@
+{
+  "component.display_name": "Plantillas",
+  "component.operation.text": "Xiknexti tlahcuilolli de plantilla",
+  "errors.invalid_input": "Amo cuali carga de entrada",
+  "errors.missing_scope": "Polihuih identificadores de alcance (tenant/env/session)",
+  "errors.template_render": "Otlahtlaco renderizado de plantilla",
+  "errors.unsupported_operation": "operation `{operation}` amo yecnemilia; xipalehui `{supported}`",
+  "qa.text.default": "Niltze {{name}}",
+  "qa.text.label": "Tlahcuilolli de plantilla",
+  "qa.title": "Configuración de plantillas"
+}

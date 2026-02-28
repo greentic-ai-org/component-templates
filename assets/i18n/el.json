@@ -1,0 +1,11 @@
+{
+  "component.display_name": "Πρότυπα",
+  "component.operation.text": "Απόδοση κειμένου προτύπου",
+  "errors.invalid_input": "Μη έγκυρο φορτίο εισόδου",
+  "errors.missing_scope": "Λείπουν αναγνωριστικά scope (tenant/env/session)",
+  "errors.template_render": "Η απόδοση προτύπου απέτυχε",
+  "errors.unsupported_operation": "η λειτουργία `{operation}` δεν υποστηρίζεται· χρησιμοποιήστε `{supported}`",
+  "qa.text.default": "Γεια σου {{name}}",
+  "qa.text.label": "Κείμενο προτύπου",
+  "qa.title": "Διαμόρφωση προτύπων"
+}

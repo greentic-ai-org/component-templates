@@ -1,0 +1,11 @@
+{
+  "component.display_name": "టెంప్లేట్లు",
+  "component.operation.text": "టెంప్లేట్ పాఠ్యాన్ని రెండర్ చేయండి",
+  "errors.invalid_input": "చెల్లని ఇన్‌పుట్ పేలోడ్",
+  "errors.missing_scope": "స్కోప్ గుర్తింపులు లేవు (tenant/env/session)",
+  "errors.template_render": "టెంప్లేట్ రెండరింగ్ విఫలమైంది",
+  "errors.unsupported_operation": "ఆపరేషన్ `{operation}` కు మద్దతు లేదు; `{supported}` ను ఉపయోగించండి",
+  "qa.text.default": "హలో {{name}}",
+  "qa.text.label": "టెంప్లేట్ పాఠ్యం",
+  "qa.title": "టెంప్లేట్ల కాన్ఫిగరేషన్"
+}

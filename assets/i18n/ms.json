@@ -1,0 +1,11 @@
+{
+  "component.display_name": "Templat",
+  "component.operation.text": "Paparkan teks templat",
+  "errors.invalid_input": "Muatan input tidak sah",
+  "errors.missing_scope": "Pengecam skop tiada (tenant/env/session)",
+  "errors.template_render": "Pemaparan templat gagal",
+  "errors.unsupported_operation": "operasi `{operation}` tidak disokong; gunakan `{supported}`",
+  "qa.text.default": "Hai {{name}}",
+  "qa.text.label": "Teks templat",
+  "qa.title": "Konfigurasi templat"
+}

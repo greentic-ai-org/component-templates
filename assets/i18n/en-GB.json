@@ -1,0 +1,11 @@
+{
+  "component.display_name": "Templates",
+  "component.operation.text": "Render template text",
+  "errors.invalid_input": "Invalid input payload",
+  "errors.missing_scope": "Missing scope identifiers (tenant/env/session)",
+  "errors.template_render": "Template rendering failed",
+  "errors.unsupported_operation": "operation `{operation}` is not supported; use `{supported}`",
+  "qa.text.default": "Hello {{name}}",
+  "qa.text.label": "Template text",
+  "qa.title": "Templates configuration"
+}

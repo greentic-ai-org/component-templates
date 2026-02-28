@@ -1,0 +1,11 @@
+{
+  "component.display_name": "Šabloni",
+  "component.operation.text": "Prikaži tekst šablona",
+  "errors.invalid_input": "Neispravan ulazni payload",
+  "errors.missing_scope": "Nedostaju identifikatori opsega (tenant/env/session)",
+  "errors.template_render": "Renderovanje šablona nije uspelo",
+  "errors.unsupported_operation": "operacija `{operation}` nije podržana; koristi `{supported}`",
+  "qa.text.default": "Zdravo {{name}}",
+  "qa.text.label": "Tekst šablona",
+  "qa.title": "Konfiguracija šablona"
+}

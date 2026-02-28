@@ -1,0 +1,11 @@
+{
+  "component.display_name": "Sjablonen",
+  "component.operation.text": "Sjabloontekst renderen",
+  "errors.invalid_input": "Ongeldige invoerpayload",
+  "errors.missing_scope": "Ontbrekende scope-identificatoren (tenant/env/session)",
+  "errors.template_render": "Het renderen van het sjabloon is mislukt",
+  "errors.unsupported_operation": "bewerking `{operation}` wordt niet ondersteund; gebruik `{supported}`",
+  "qa.text.default": "Hallo {{name}}",
+  "qa.text.label": "Sjabloontekst",
+  "qa.title": "Sjablonenconfiguratie"
+}

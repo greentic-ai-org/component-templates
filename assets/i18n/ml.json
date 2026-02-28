@@ -1,0 +1,11 @@
+{
+  "component.display_name": "ടെംപ്ലേറ്റുകൾ",
+  "component.operation.text": "ടെംപ്ലേറ്റ് ടെക്സ്റ്റ് റെൻഡർ ചെയ്യുക",
+  "errors.invalid_input": "അസാധുവായ ഇൻപുട്ട് പേലോഡ്",
+  "errors.missing_scope": "സ്കോപ്പ് ഐഡന്റിഫയറുകൾ ഇല്ല (tenant/env/session)",
+  "errors.template_render": "ടെംപ്ലേറ്റ് റെൻഡറിംഗ് പരാജയപ്പെട്ടു",
+  "errors.unsupported_operation": "operation `{operation}` പിന്തുണയ്ക്കുന്നില്ല; `{supported}` ഉപയോഗിക്കുക",
+  "qa.text.default": "നമസ്കാരം {{name}}",
+  "qa.text.label": "ടെംപ്ലേറ്റ് ടെക്സ്റ്റ്",
+  "qa.title": "ടെംപ്ലേറ്റുകളുടെ കോൺഫിഗറേഷൻ"
+}

@@ -1,0 +1,11 @@
+{
+  "component.display_name": "テンプレート",
+  "component.operation.text": "テンプレートテキストをレンダリング",
+  "errors.invalid_input": "無効な入力ペイロード",
+  "errors.missing_scope": "スコープ識別子がありません（tenant/env/session）",
+  "errors.template_render": "テンプレートのレンダリングに失敗しました",
+  "errors.unsupported_operation": "操作 `{operation}` はサポートされていません。`{supported}` を使用してください",
+  "qa.text.default": "こんにちは {{name}}",
+  "qa.text.label": "テンプレートテキスト",
+  "qa.title": "テンプレート設定"
+}

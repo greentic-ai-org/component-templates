@@ -1,0 +1,11 @@
+{
+  "component.display_name": "ਟੈਂਪਲੇਟਸ",
+  "component.operation.text": "ਟੈਂਪਲੇਟ ਪਾਠ ਰੇਂਡਰ ਕਰੋ",
+  "errors.invalid_input": "ਅਵੈਧ ਇਨਪੁੱਟ ਪੇਲੋਡ",
+  "errors.missing_scope": "ਸਕੋਪ ਪਛਾਣਕਰਤਾ ਗਾਇਬ ਹਨ (tenant/env/session)",
+  "errors.template_render": "ਟੈਂਪਲੇਟ ਰੇਂਡਰਿੰਗ ਅਸਫਲ ਰਹੀ",
+  "errors.unsupported_operation": "operation `{operation}` ਸਮਰਥਿਤ ਨਹੀਂ ਹੈ; `{supported}` ਵਰਤੋ",
+  "qa.text.default": "ਸਤ ਸ੍ਰੀ ਅਕਾਲ {{name}}",
+  "qa.text.label": "ਟੈਂਪਲੇਟ ਪਾਠ",
+  "qa.title": "ਟੈਂਪਲੇਟਸ ਸੰਰਚਨਾ"
+}

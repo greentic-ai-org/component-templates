@@ -1,0 +1,11 @@
+{
+  "component.display_name": "Plantillanaka",
+  "component.operation.text": "Plantilla qillqata uñachtayaña",
+  "errors.invalid_input": "Mantaña payload jan waliwa",
+  "errors.missing_scope": "Scope uñt'ayirinaka faltaski (tenant/env/session)",
+  "errors.template_render": "Plantilla uñachtayaña pantjasiwayi",
+  "errors.unsupported_operation": "lurawi `{operation}` janiwa yanapt'atäkiti; apnaqam `{supported}`",
+  "qa.text.default": "Kamisaraki {{name}}",
+  "qa.text.label": "Plantilla qillqata",
+  "qa.title": "Plantillanaka wakichawi"
+}

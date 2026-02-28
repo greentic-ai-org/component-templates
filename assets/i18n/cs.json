@@ -1,0 +1,11 @@
+{
+  "component.display_name": "Šablony",
+  "component.operation.text": "Vykreslit text šablony",
+  "errors.invalid_input": "Neplatný vstupní payload",
+  "errors.missing_scope": "Chybí identifikátory rozsahu (tenant/env/session)",
+  "errors.template_render": "Vykreslení šablony selhalo",
+  "errors.unsupported_operation": "operace `{operation}` není podporována; použijte `{supported}`",
+  "qa.text.default": "Ahoj {{name}}",
+  "qa.text.label": "Text šablony",
+  "qa.title": "Konfigurace šablon"
+}

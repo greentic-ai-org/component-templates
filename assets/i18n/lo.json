@@ -1,0 +1,11 @@
+{
+  "component.display_name": "ແມ່ແບບ",
+  "component.operation.text": "ເຣນເດີຂໍ້ຄວາມແມ່ແບບ",
+  "errors.invalid_input": "payload ຂໍ້ມູນນໍາເຂົ້າບໍ່ຖືກຕ້ອງ",
+  "errors.missing_scope": "ຂາດຕົວລະບຸຂອບເຂດ (tenant/env/session)",
+  "errors.template_render": "ການເຣນເດີແມ່ແບບລົ້ມເຫຼວ",
+  "errors.unsupported_operation": "ບໍ່ຮອງຮັບ operation `{operation}`; ໃຫ້ໃຊ້ `{supported}`",
+  "qa.text.default": "ສະບາຍດີ {{name}}",
+  "qa.text.label": "ຂໍ້ຄວາມແມ່ແບບ",
+  "qa.title": "ການຕັ້ງຄ່າແມ່ແບບ"
+}

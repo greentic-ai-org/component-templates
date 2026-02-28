@@ -1,5 +1,8 @@
 #![cfg_attr(not(target_arch = "wasm32"), allow(dead_code))]
 
+mod i18n;
+mod i18n_bundle;
+
 use handlebars::{Handlebars, RenderError};
 use serde::{Deserialize, Serialize};
 use serde_json::{Map, Value, json};
@@ -125,6 +128,8 @@ struct TemplateConfig {
 #[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]
 struct ComponentError {
     kind: String,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    msg_key: Option<String>,
     message: String,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     details: Option<Value>,
@@ -144,16 +149,74 @@ struct ComponentResult {
 #[derive(Debug)]
 pub enum InvokeFailure {
     InvalidInput(String),
-    InvalidScope(String),
-    UnsupportedOperation(String),
+    InvalidScope,
+    UnsupportedOperation {
+        operation: String,
+        supported: String,
+    },
 }
 
 impl core::fmt::Display for InvokeFailure {
     fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
         match self {
-            InvokeFailure::InvalidInput(msg) => write!(f, "{msg}"),
-            InvokeFailure::InvalidScope(msg) => write!(f, "{msg}"),
-            InvokeFailure::UnsupportedOperation(msg) => write!(f, "{msg}"),
+            InvokeFailure::InvalidInput(raw) => {
+                write!(f, "{} ({raw})", i18n::t("en", "errors.invalid_input"))
+            }
+            InvokeFailure::InvalidScope => write!(f, "{}", i18n::t("en", "errors.missing_scope")),
+            InvokeFailure::UnsupportedOperation {
+                operation,
+                supported,
+            } => write!(
+                f,
+                "{}",
+                i18n::tf(
+                    "en",
+                    "errors.unsupported_operation",
+                    &[
+                        ("operation", operation.clone()),
+                        ("supported", supported.clone()),
+                    ],
+                )
+            ),
+        }
+    }
+}
+
+impl InvokeFailure {
+    fn to_component_error(&self, locale: &str) -> ComponentError {
+        match self {
+            InvokeFailure::InvalidInput(raw) => {
+                let mut details = Map::new();
+                details.insert("error".to_string(), Value::String(raw.clone()));
+                ComponentError {
+                    kind: "InvalidInput".to_string(),
+                    msg_key: Some("errors.invalid_input".to_string()),
+                    message: i18n::t(locale, "errors.invalid_input"),
+                    details: Some(Value::Object(details)),
+                }
+            }
+            InvokeFailure::InvalidScope => ComponentError {
+                kind: "InvalidScope".to_string(),
+                msg_key: Some("errors.missing_scope".to_string()),
+                message: i18n::t(locale, "errors.missing_scope"),
+                details: None,
+            },
+            InvokeFailure::UnsupportedOperation {
+                operation,
+                supported,
+            } => ComponentError {
+                kind: "UnsupportedOperation".to_string(),
+                msg_key: Some("errors.unsupported_operation".to_string()),
+                message: i18n::tf(
+                    locale,
+                    "errors.unsupported_operation",
+                    &[
+                        ("operation", operation.clone()),
+                        ("supported", supported.clone()),
+                    ],
+                ),
+                details: None,
+            },
         }
     }
 }
@@ -321,6 +384,7 @@ fn output_schema_ir() -> SchemaIr {
                 SchemaIr::Object {
                     properties: BTreeMap::from([
                         ("kind".to_string(), string_schema(1)),
+                        ("msg_key".to_string(), string_schema(1)),
                         ("message".to_string(), string_schema(1)),
                         (
                             "details".to_string(),
@@ -349,10 +413,7 @@ fn component_info() -> ComponentInfo {
         id: COMPONENT_ID.to_string(),
         version: COMPONENT_VERSION.to_string(),
         role: COMPONENT_ROLE.to_string(),
-        display_name: Some(I18nText::new(
-            "templates.display_name",
-            Some("Templates".to_string()),
-        )),
+        display_name: Some(I18nText::new("component.display_name", None)),
     }
 }
 
@@ -370,10 +431,7 @@ fn component_describe() -> ComponentDescribe {
         metadata: BTreeMap::new(),
         operations: vec![ComponentOperation {
             id: SUPPORTED_OPERATION.to_string(),
-            display_name: Some(I18nText::new(
-                "templates.operation.text",
-                Some("Render template text".to_string()),
-            )),
+            display_name: Some(I18nText::new("component.operation.text", None)),
             input: ComponentRunInput {
                 schema: input_schema,
             },
@@ -410,18 +468,15 @@ fn config_schema_cbor() -> Vec<u8> {
 }
 
 fn qa_spec_for_mode(mode: ComponentQaMode) -> ComponentQaSpec {
-    let title = I18nText::new(
-        "templates.qa.title",
-        Some("Templates configuration".to_string()),
-    );
+    let title = I18nText::new("qa.title", None);
     let question = Question {
         id: "templates.text".to_string(),
-        label: I18nText::new("templates.qa.text.label", Some("Template text".to_string())),
+        label: I18nText::new("qa.text.label", None),
         help: None,
         error: None,
         kind: QuestionKind::Text,
         required: true,
-        default: Some(CborValue::Text("Hello {{name}}".to_string())),
+        default: Some(CborValue::Text(i18n::t("en", "qa.text.default"))),
     };
 
     ComponentQaSpec {
@@ -438,7 +493,7 @@ fn qa_spec_cbor(mode: exports::greentic::component::component_qa::QaMode) -> Vec
     let mapped = match mode {
         exports::greentic::component::component_qa::QaMode::Default => ComponentQaMode::Default,
         exports::greentic::component::component_qa::QaMode::Setup => ComponentQaMode::Setup,
-        exports::greentic::component::component_qa::QaMode::Upgrade => ComponentQaMode::Upgrade,
+        exports::greentic::component::component_qa::QaMode::Update => ComponentQaMode::Update,
         exports::greentic::component::component_qa::QaMode::Remove => ComponentQaMode::Remove,
     };
     let spec = qa_spec_for_mode(mapped);
@@ -459,15 +514,59 @@ fn apply_answers_cbor(
         (Some(value @ Value::Object(_)), _) => value,
         _ => Value::Object(Map::new()),
     };
-    encode_cbor(&merged)
+    let normalized = normalize_config_for_schema(merged);
+    encode_cbor(&normalized)
+}
+
+fn normalize_config_for_schema(value: Value) -> Value {
+    let mut root = match value {
+        Value::Object(map) => map,
+        _ => Map::new(),
+    };
+
+    let mut templates = match root.remove("templates") {
+        Some(Value::Object(map)) => map,
+        _ => Map::new(),
+    };
+
+    if let Some(v) = root.remove("templates.output_path") {
+        templates.entry("output_path".to_string()).or_insert(v);
+    }
+    if let Some(v) = root.remove("templates.wrap") {
+        templates.entry("wrap".to_string()).or_insert(v);
+    }
+    if let Some(v) = root.remove("templates.routing") {
+        templates.entry("routing".to_string()).or_insert(v);
+    }
+    if let Some(v) = root.remove("templates.text") {
+        templates.entry("text".to_string()).or_insert(v);
+    }
+
+    let has_text = templates
+        .get("text")
+        .and_then(Value::as_str)
+        .map(|s| !s.trim().is_empty())
+        .unwrap_or(false);
+    if !has_text {
+        templates.insert(
+            "text".to_string(),
+            Value::String(i18n::t("en", "qa.text.default")),
+        );
+    }
+
+    root.insert("templates".to_string(), Value::Object(templates));
+    Value::Object(root)
 }
 
 fn i18n_keys() -> Vec<String> {
     let mut keys = BTreeSet::new();
+    for key in i18n::all_en_keys() {
+        keys.insert(key);
+    }
     for mode in [
         ComponentQaMode::Default,
         ComponentQaMode::Setup,
-        ComponentQaMode::Upgrade,
+        ComponentQaMode::Update,
         ComponentQaMode::Remove,
     ] {
         let spec = qa_spec_for_mode(mode);
@@ -482,26 +581,21 @@ fn run_component_cbor(input: Vec<u8>, _state: Vec<u8>) -> (Vec<u8>, Vec<u8>) {
     let invocation: Result<ComponentInvocation, InvokeFailure> = decode_cbor(&input);
     let result = match invocation {
         Ok(invocation) => {
-            invoke_template_from_invocation(invocation).unwrap_or_else(|err| ComponentResult {
-                payload: Value::Null,
-                state_updates: empty_object(),
-                control: None,
-                error: Some(ComponentError {
-                    kind: "InvalidInput".to_string(),
-                    message: err.to_string(),
-                    details: None,
-                }),
+            let locale = i18n::select_locale(&invocation.config, &invocation.msg);
+            invoke_template_from_invocation(invocation, &locale).unwrap_or_else(|err| {
+                ComponentResult {
+                    payload: Value::Null,
+                    state_updates: empty_object(),
+                    control: None,
+                    error: Some(err.to_component_error(&locale)),
+                }
             })
         }
         Err(err) => ComponentResult {
             payload: Value::Null,
             state_updates: empty_object(),
             control: None,
-            error: Some(ComponentError {
-                kind: "InvalidInput".to_string(),
-                message: err.to_string(),
-                details: None,
-            }),
+            error: Some(err.to_component_error("en")),
         },
     };
     (encode_cbor(&result), encode_cbor(&empty_object()))
@@ -528,22 +622,24 @@ pub fn describe_payload() -> String {
 /// Entry point used by both sync and streaming invocations.
 pub fn invoke_template(_operation: &str, input: &str) -> Result<String, InvokeFailure> {
     if _operation != SUPPORTED_OPERATION {
-        return Err(InvokeFailure::UnsupportedOperation(format!(
-            "operation `{}` is not supported; use `{}`",
-            _operation, SUPPORTED_OPERATION
-        )));
+        return Err(InvokeFailure::UnsupportedOperation {
+            operation: _operation.to_string(),
+            supported: SUPPORTED_OPERATION.to_string(),
+        });
     }
 
     let invocation: ComponentInvocation =
         serde_json::from_str(input).map_err(|err| InvokeFailure::InvalidInput(err.to_string()))?;
 
-    let result = invoke_template_from_invocation(invocation)?;
+    let locale = i18n::select_locale(&invocation.config, &invocation.msg);
+    let result = invoke_template_from_invocation(invocation, &locale)?;
 
     serde_json::to_string(&result).map_err(|err| InvokeFailure::InvalidInput(err.to_string()))
 }
 
 fn invoke_template_from_invocation(
     invocation: ComponentInvocation,
+    locale: &str,
 ) -> Result<ComponentResult, InvokeFailure> {
     ensure_scope(&invocation.msg)?;
 
@@ -564,7 +660,7 @@ fn invoke_template_from_invocation(
             payload: Value::Null,
             state_updates: empty_object(),
             control: None,
-            error: Some(err.into_component_error()),
+            error: Some(err.into_component_error(locale)),
         },
     };
 
@@ -650,9 +746,7 @@ fn ensure_scope(msg: &ChannelMessageEnvelope) -> Result<(), InvokeFailure> {
     let session_id = msg.session_id.clone();
 
     if tenant_id.is_empty() || env_id.is_empty() || session_id.is_empty() {
-        return Err(InvokeFailure::InvalidScope(
-            "missing scope identifiers (tenant/env/session)".to_string(),
-        ));
+        return Err(InvokeFailure::InvalidScope);
     }
 
     Ok(())
@@ -660,7 +754,6 @@ fn ensure_scope(msg: &ChannelMessageEnvelope) -> Result<(), InvokeFailure> {
 
 #[derive(Debug)]
 struct TemplateError {
-    message: String,
     details: Option<Value>,
 }
 
@@ -675,15 +768,15 @@ impl TemplateError {
             details.insert("column".to_owned(), Value::Number(column.into()));
         }
         Self {
-            message: err.to_string(),
             details: Some(Value::Object(details)),
         }
     }
 
-    fn into_component_error(self) -> ComponentError {
+    fn into_component_error(self, locale: &str) -> ComponentError {
         ComponentError {
             kind: "TemplateError".to_owned(),
-            message: self.message,
+            msg_key: Some("errors.template_render".to_string()),
+            message: i18n::t(locale, "errors.template_render"),
             details: self.details,
         }
     }
@@ -854,7 +947,7 @@ mod tests {
             &serde_json::to_string(&invocation).expect("serialize invocation"),
         );
 
-        assert!(matches!(result, Err(InvokeFailure::InvalidScope(_))));
+        assert!(matches!(result, Err(InvokeFailure::InvalidScope)));
     }
 
     #[test]
@@ -888,7 +981,78 @@ mod tests {
         let result = invoke_template("handlebars", &serde_json::to_string(&invocation).unwrap());
         assert!(matches!(
             result,
-            Err(InvokeFailure::UnsupportedOperation(_))
+            Err(InvokeFailure::UnsupportedOperation { .. })
         ));
+    }
+
+    #[test]
+    fn locale_selection_prefers_config_then_metadata() {
+        let mut invocation = sample_invocation("Hi", json!({}));
+        invocation
+            .msg
+            .metadata
+            .insert("locale".to_string(), "ar-SA".to_string());
+        invocation.config = json!({ "templates": { "text": "Hi" }, "locale": "en-GB" });
+        assert_eq!(
+            i18n::select_locale(&invocation.config, &invocation.msg),
+            "en-GB"
+        );
+
+        invocation.config = json!({ "templates": { "text": "Hi", "locale": "ja_JP.UTF-8" } });
+        assert_eq!(
+            i18n::select_locale(&invocation.config, &invocation.msg),
+            "ja"
+        );
+
+        invocation.config = json!({ "templates": { "text": "Hi" } });
+        assert_eq!(
+            i18n::select_locale(&invocation.config, &invocation.msg),
+            "ar-SA"
+        );
+    }
+
+    #[test]
+    fn runtime_errors_expose_msg_key() {
+        let mut invocation = sample_invocation("Hi", json!({}));
+        invocation.msg.session_id = "".to_string();
+        invocation
+            .msg
+            .metadata
+            .insert("locale".to_string(), "ar-SA".to_string());
+
+        let (output, _) = run_component_cbor(encode_cbor(&invocation), Vec::new());
+        let result: Value = canonical::from_cbor(&output).expect("decode output");
+
+        assert_eq!(result["error"]["msg_key"], "errors.missing_scope");
+        assert_eq!(result["error"]["kind"], "InvalidScope");
+        assert!(result["error"]["message"].is_string());
+    }
+
+    #[test]
+    fn i18n_fallback_chain_and_key_echo_work() {
+        let en_title = i18n::t("en", "qa.title");
+        assert!(!en_title.is_empty());
+        assert!(!i18n::t("ar-SA", "qa.title").is_empty());
+        assert_eq!(i18n::t("zz-ZZ", "qa.title"), en_title);
+        assert_eq!(i18n::t("en", "missing.key"), "missing.key");
+    }
+
+    #[test]
+    fn locale_smoke_for_runtime_error_paths() {
+        for locale in ["en", "ar", "ja", "en-GB"] {
+            let mut invocation = sample_invocation("Hi", json!({}));
+            invocation.msg.session_id = "".to_string();
+            invocation
+                .msg
+                .metadata
+                .insert("locale".to_string(), locale.to_string());
+
+            let (output, _) = run_component_cbor(encode_cbor(&invocation), Vec::new());
+            let result: Value = canonical::from_cbor(&output).expect("decode output");
+
+            assert_eq!(result["error"]["msg_key"], "errors.missing_scope");
+            assert_eq!(result["error"]["kind"], "InvalidScope");
+            assert!(!result["error"]["message"].as_str().unwrap_or("").is_empty());
+        }
     }
 }

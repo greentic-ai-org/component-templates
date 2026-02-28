@@ -1,0 +1,11 @@
+{
+  "component.display_name": "Шаблоны",
+  "component.operation.text": "Рендерить текст шаблона",
+  "errors.invalid_input": "Некорректный входной payload",
+  "errors.missing_scope": "Отсутствуют идентификаторы области (tenant/env/session)",
+  "errors.template_render": "Не удалось отрендерить шаблон",
+  "errors.unsupported_operation": "операция `{operation}` не поддерживается; используйте `{supported}`",
+  "qa.text.default": "Привет, {{name}}",
+  "qa.text.label": "Текст шаблона",
+  "qa.title": "Конфигурация шаблонов"
+}

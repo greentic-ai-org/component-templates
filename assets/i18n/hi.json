@@ -1,0 +1,11 @@
+{
+  "component.display_name": "टेम्पलेट्स",
+  "component.operation.text": "टेम्पलेट टेक्स्ट रेंडर करें",
+  "errors.invalid_input": "अमान्य इनपुट पेलोड",
+  "errors.missing_scope": "स्कोप पहचानकर्ता अनुपस्थित हैं (tenant/env/session)",
+  "errors.template_render": "टेम्पलेट रेंडरिंग विफल हुई",
+  "errors.unsupported_operation": "ऑपरेशन `{operation}` समर्थित नहीं है; `{supported}` का उपयोग करें",
+  "qa.text.default": "नमस्ते {{name}}",
+  "qa.text.label": "टेम्पलेट टेक्स्ट",
+  "qa.title": "टेम्पलेट्स कॉन्फ़िगरेशन"
+}

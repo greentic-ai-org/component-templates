@@ -1,0 +1,11 @@
+{
+  "component.display_name": "Mẫu",
+  "component.operation.text": "Kết xuất văn bản mẫu",
+  "errors.invalid_input": "Tải trọng đầu vào không hợp lệ",
+  "errors.missing_scope": "Thiếu định danh phạm vi (tenant/env/session)",
+  "errors.template_render": "Kết xuất mẫu thất bại",
+  "errors.unsupported_operation": "operation `{operation}` không được hỗ trợ; hãy dùng `{supported}`",
+  "qa.text.default": "Xin chào {{name}}",
+  "qa.text.label": "Văn bản mẫu",
+  "qa.title": "Cấu hình mẫu"
+}

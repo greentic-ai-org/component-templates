@@ -1,0 +1,11 @@
+{
+  "component.display_name": "ટેમ્પ્લેટ્સ",
+  "component.operation.text": "ટેમ્પ્લેટ લખાણ રેન્ડર કરો",
+  "errors.invalid_input": "અમાન્ય ઇનપુટ પેલોડ",
+  "errors.missing_scope": "ગાયબ સ્કોપ ઓળખકારકો (tenant/env/session)",
+  "errors.template_render": "ટેમ્પ્લેટ રેન્ડરિંગ નિષ્ફળ ગયું",
+  "errors.unsupported_operation": "operation `{operation}` is not supported; use `{supported}`",
+  "qa.text.default": "હેલો {{name}}",
+  "qa.text.label": "ટેમ્પ્લેટ લખાણ",
+  "qa.title": "ટેમ્પ્લેટ્સ કન્ફિગરેશન"
+}

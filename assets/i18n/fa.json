@@ -1,0 +1,11 @@
+{
+  "component.display_name": "قالب‌ها",
+  "component.operation.text": "رندر متن قالب",
+  "errors.invalid_input": "بار داده ورودی نامعتبر است",
+  "errors.missing_scope": "شناسه‌های محدوده موجود نیستند (tenant/env/session)",
+  "errors.template_render": "رندر قالب ناموفق بود",
+  "errors.unsupported_operation": "عملیات `{operation}` پشتیبانی نمی‌شود؛ از `{supported}` استفاده کنید",
+  "qa.text.default": "سلام {{name}}",
+  "qa.text.label": "متن قالب",
+  "qa.title": "پیکربندی قالب‌ها"
+}

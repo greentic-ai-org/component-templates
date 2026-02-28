@@ -1,0 +1,11 @@
+{
+  "component.display_name": "ٹیمپلیٹس",
+  "component.operation.text": "ٹیمپلیٹ متن رینڈر کریں",
+  "errors.invalid_input": "غلط ان پٹ پے لوڈ",
+  "errors.missing_scope": "اسکوپ شناخت کنندگان غائب ہیں (tenant/env/session)",
+  "errors.template_render": "ٹیمپلیٹ رینڈرنگ ناکام ہو گئی",
+  "errors.unsupported_operation": "آپریشن `{operation}` سپورٹ نہیں ہے؛ `{supported}` استعمال کریں",
+  "qa.text.default": "ہیلو {{name}}",
+  "qa.text.label": "ٹیمپلیٹ متن",
+  "qa.title": "ٹیمپلیٹس کی ترتیب"
+}

@@ -1,0 +1,11 @@
+{
+  "component.display_name": "Plantillakuna",
+  "component.operation.text": "Plantilla qillqata rurachiy",
+  "errors.invalid_input": "Yaykuy payload mana allin",
+  "errors.missing_scope": "Pisi kanku alcance riqsichiqkuna (tenant/env/session)",
+  "errors.template_render": "Plantilla qillqa rurachiyqa pantarqan",
+  "errors.unsupported_operation": "ruwana `{operation}` mana yanapasqachu; `{supported}` llamk'achiy",
+  "qa.text.default": "Rimaykullayki {{name}}",
+  "qa.text.label": "Plantilla qillqa",
+  "qa.title": "Plantillakuna wakichiy"
+}

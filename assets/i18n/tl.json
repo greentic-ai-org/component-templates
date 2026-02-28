@@ -1,0 +1,11 @@
+{
+  "component.display_name": "Mga Template",
+  "component.operation.text": "I-render ang teksto ng template",
+  "errors.invalid_input": "Di-wastong payload ng input",
+  "errors.missing_scope": "Nawawalang mga identifier ng scope (tenant/env/session)",
+  "errors.template_render": "Nabigo ang pag-render ng template",
+  "errors.unsupported_operation": "ang operation `{operation}` ay hindi sinusuportahan; gamitin ang `{supported}`",
+  "qa.text.default": "Kumusta {{name}}",
+  "qa.text.label": "Teksto ng template",
+  "qa.title": "Konpigurasyon ng mga template"
+}

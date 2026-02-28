@@ -1,0 +1,11 @@
+{
+  "component.display_name": "টেমপ্লেটসমূহ",
+  "component.operation.text": "টেমপ্লেট টেক্সট রেন্ডার করুন",
+  "errors.invalid_input": "অকার্যকর ইনপুট পেলোড",
+  "errors.missing_scope": "স্কোপ শনাক্তকারী অনুপস্থিত (tenant/env/session)",
+  "errors.template_render": "টেমপ্লেট রেন্ডারিং ব্যর্থ হয়েছে",
+  "errors.unsupported_operation": "operation `{operation}` সমর্থিত নয়; `{supported}` ব্যবহার করুন",
+  "qa.text.default": "হ্যালো {{name}}",
+  "qa.text.label": "টেমপ্লেট টেক্সট",
+  "qa.title": "টেমপ্লেটসমূহের কনফিগারেশন"
+}

@@ -1,0 +1,11 @@
+{
+  "component.display_name": "Sablonok",
+  "component.operation.text": "Sablonszöveg renderelése",
+  "errors.invalid_input": "Érvénytelen bemeneti adat",
+  "errors.missing_scope": "Hiányzó hatókör-azonosítók (tenant/env/session)",
+  "errors.template_render": "A sablon renderelése sikertelen",
+  "errors.unsupported_operation": "a(z) `{operation}` művelet nem támogatott; használd ezt: `{supported}`",
+  "qa.text.default": "Szia {{name}}",
+  "qa.text.label": "Sablonszöveg",
+  "qa.title": "Sablonok konfigurációja"
+}
