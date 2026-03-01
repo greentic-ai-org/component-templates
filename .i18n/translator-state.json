@@ -4701,6 +4701,24 @@
           "engine": "codex-cli",
           "timestamp_epoch_secs": 1772369444
         },
+        "qa.text.default": {
+          "last_english_hash": "a3970da0414af578176cefa5e558ee4710020e1966507aca301d7266c9cedc3c",
+          "last_bot_translation_hash": "f482233e84545bee11f86776e92d1f9bbb3e808a940b055428a3008e5863861e",
+          "engine": "codex-cli",
+          "timestamp_epoch_secs": 1772376110
+        },
+        "qa.text.label": {
+          "last_english_hash": "b2323575e83d5df773a6706e4195c35d9a2ee5e5f46f5621a93380f3b96a35ca",
+          "last_bot_translation_hash": "e672400d5432cfabd7faf769a76baf80596f7130c4a4436bd51bb13b91d0b736",
+          "engine": "codex-cli",
+          "timestamp_epoch_secs": 1772376110
+        },
+        "qa.title": {
+          "last_english_hash": "32e3e783cf8187ca2fb4fb6e7480748db1bdf3f96d35be46109da464cb9a9873",
+          "last_bot_translation_hash": "63670b889fd11f2c9c573153d2c9664ebee445e742b22444fef95fa1932593cf",
+          "engine": "codex-cli",
+          "timestamp_epoch_secs": 1772376110
+        },
         "qa.update.description": {
           "last_english_hash": "c3ef002a9dc9c0a1d77685f10da7df067a7572dea5282a7d32740ccbfe17e4ac",
           "last_bot_translation_hash": "8b73891a73f175622c83819d350f934085c0ad473e4a78fc2e3196ff0777d66a",
@@ -9160,6 +9178,24 @@
           "last_bot_translation_hash": "f21b7df79db591054d4ee042c4ba9c0a155312ce8971d1acd54e1bba006fcd5e",
           "engine": "codex-cli",
           "timestamp_epoch_secs": 1772369444
+        },
+        "qa.text.default": {
+          "last_english_hash": "a3970da0414af578176cefa5e558ee4710020e1966507aca301d7266c9cedc3c",
+          "last_bot_translation_hash": "b6d72aeaa0822247c99876dfe0fcdb3a2d2159aaedb293b35d1302a7af411e37",
+          "engine": "codex-cli",
+          "timestamp_epoch_secs": 1772376113
+        },
+        "qa.text.label": {
+          "last_english_hash": "b2323575e83d5df773a6706e4195c35d9a2ee5e5f46f5621a93380f3b96a35ca",
+          "last_bot_translation_hash": "f61e0a888fbc0331c08c8a142eed83e6c19ff0e51b2ee0ac1c1eef4d4f4027df",
+          "engine": "codex-cli",
+          "timestamp_epoch_secs": 1772376113
+        },
+        "qa.title": {
+          "last_english_hash": "32e3e783cf8187ca2fb4fb6e7480748db1bdf3f96d35be46109da464cb9a9873",
+          "last_bot_translation_hash": "3f656ebd6fe637387cb2418acc1447e934db8efe21bf2e4bf1d55d3dc73b4afc",
+          "engine": "codex-cli",
+          "timestamp_epoch_secs": 1772376113
         },
         "qa.update.description": {
           "last_english_hash": "c3ef002a9dc9c0a1d77685f10da7df067a7572dea5282a7d32740ccbfe17e4ac",

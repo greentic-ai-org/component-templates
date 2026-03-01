@@ -1,14 +1,22 @@
 #[cfg(target_arch = "wasm32")]
 use std::collections::BTreeMap;
+#[cfg(test)]
+use std::collections::BTreeMap;
 
 #[cfg(target_arch = "wasm32")]
 use greentic_types::cbor::canonical;
+#[cfg(any(target_arch = "wasm32", test))]
+use greentic_types::i18n_text::I18nText;
 #[cfg(target_arch = "wasm32")]
 use greentic_types::schemas::common::schema_ir::{AdditionalProperties, SchemaIr};
 #[cfg(target_arch = "wasm32")]
 use greentic_types::schemas::component::v0_6_0::{
     ComponentDescribe, ComponentInfo, ComponentOperation, ComponentRunInput, ComponentRunOutput,
-    I18nText, schema_hash,
+    schema_hash,
+};
+#[cfg(any(target_arch = "wasm32", test))]
+use greentic_types::schemas::component::v0_6_0::{
+    ComponentQaSpec, QaMode as QaModeSpec, Question, QuestionKind,
 };
 #[cfg(target_arch = "wasm32")]
 mod bindings {
@@ -134,28 +142,37 @@ pub fn handle_message(operation: &str, input: &str) -> String {
 }
 
 #[cfg(any(target_arch = "wasm32", test))]
-fn qa_spec_payload(mode_key: &str) -> serde_json::Value {
+fn qa_spec_payload(mode_key: &str) -> ComponentQaSpec {
+    let mode = match mode_key {
+        "default" => QaModeSpec::Default,
+        "setup" => QaModeSpec::Setup,
+        "update" => QaModeSpec::Update,
+        "remove" => QaModeSpec::Remove,
+        _ => QaModeSpec::Default,
+    };
     let asks_template_text = matches!(mode_key, "default" | "setup" | "update");
     let required = matches!(mode_key, "default" | "setup");
     let questions = if asks_template_text {
-        vec![serde_json::json!({
-            "id": "text",
-            "label": { "key": "qa.text.label" },
-            "kind": "text",
-            "required": required,
-            "default": { "key": "qa.text.default" }
-        })]
+        vec![Question {
+            id: "text".to_string(),
+            label: I18nText::new("qa.text.label", None),
+            help: None,
+            error: None,
+            kind: QuestionKind::Text,
+            required,
+            default: None,
+        }]
     } else {
         Vec::new()
     };
 
-    serde_json::json!({
-        "mode": mode_key,
-        "title": { "key": format!("qa.{mode_key}.title") },
-        "description": { "key": format!("qa.{mode_key}.description") },
-        "questions": questions,
-        "defaults": {}
-    })
+    ComponentQaSpec {
+        mode,
+        title: I18nText::new(format!("qa.{mode_key}.title"), None),
+        description: Some(I18nText::new(format!("qa.{mode_key}.description"), None)),
+        questions,
+        defaults: BTreeMap::new(),
+    }
 }
 
 #[cfg(any(target_arch = "wasm32", test))]
@@ -354,6 +371,8 @@ fn config_schema_cbor() -> Vec<u8> {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use greentic_types::cbor::canonical;
+    use greentic_types::schemas::component::v0_6_0::ComponentQaSpec;
 
     #[test]
     fn describe_payload_is_json() {
@@ -371,13 +390,24 @@ mod tests {
     #[test]
     fn qa_spec_default_includes_text_question() {
         let spec = qa_spec_payload("default");
-        let first = spec["questions"]
-            .as_array()
-            .and_then(|v| v.first())
-            .cloned()
-            .unwrap_or_default();
-        assert_eq!(first["id"], "text");
-        assert_eq!(first["label"]["key"], "qa.text.label");
+        let first = spec.questions.first().expect("text question");
+        assert_eq!(first.id, "text");
+        assert_eq!(first.label.key, "qa.text.label");
+    }
+
+    #[test]
+    fn qa_spec_modes_round_trip_as_canonical_cbor() {
+        for (mode, expected_required) in [("default", true), ("setup", true), ("update", false)] {
+            let spec = qa_spec_payload(mode);
+            let cbor = canonical::to_canonical_cbor_allow_floats(&spec).expect("encode cbor");
+            let decoded: ComponentQaSpec = canonical::from_cbor(&cbor).expect("decode cbor");
+            let question = decoded.questions.first().expect("text question");
+
+            assert_eq!(decoded.mode.to_string(), mode);
+            assert_eq!(question.id, "text");
+            assert_eq!(question.required, expected_required);
+            assert_eq!(question.label.key, "qa.text.label");
+        }
     }
 
     #[test]
@@ -401,5 +431,19 @@ mod tests {
             serde_json::json!({ "templates": { "text": "Hello {{name}}" } }),
         );
         assert_eq!(updated["templates"]["text"], "Hello {{name}}");
+    }
+
+    #[test]
+    fn apply_answers_leaves_existing_text_when_no_answer_is_present() {
+        let current = serde_json::json!({
+            "templates": {
+                "text": "Existing value",
+                "output_path": "text"
+            }
+        });
+        let updated = apply_template_answers(current.clone(), serde_json::json!({}));
+        assert_eq!(updated["templates"]["text"], "Existing value");
+        assert_eq!(updated["templates"]["output_path"], "text");
+        assert_eq!(updated, current);
     }
 }
