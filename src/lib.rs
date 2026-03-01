@@ -30,7 +30,7 @@ pub mod qa;
 
 const COMPONENT_NAME: &str = "component-templates";
 const COMPONENT_ORG: &str = "ai.greentic";
-const COMPONENT_VERSION: &str = "0.1.13";
+const COMPONENT_VERSION: &str = env!("CARGO_PKG_VERSION");
 
 #[cfg(target_arch = "wasm32")]
 #[used]
@@ -91,37 +91,14 @@ impl component_runtime::Guest for Component {
 impl component_qa::Guest for Component {
     fn qa_spec(mode: QaMode) -> Vec<u8> {
         let mode_key = mode_key(mode);
-        let spec = serde_json::json!({
-            "mode": mode_key,
-            "title": { "key": format!("qa.{mode_key}.title") },
-            "description": { "key": format!("qa.{mode_key}.description") },
-            "questions": [],
-            "defaults": {}
-        });
-        encode_cbor(&spec)
+        encode_cbor(&qa_spec_payload(mode_key))
     }
 
     fn apply_answers(mode: QaMode, current_config: Vec<u8>, answers: Vec<u8>) -> Vec<u8> {
         let _ = mode;
-        let mut merged = match parse_payload(&current_config) {
-            serde_json::Value::Object(map) => map,
-            _ => serde_json::Map::new(),
-        };
-
-        if let serde_json::Value::Object(map) = parse_payload(&answers) {
-            for (k, v) in map {
-                merged.insert(k, v);
-            }
-        }
-
-        let mut constrained = serde_json::Map::new();
-        for key in ["api_key", "region", "webhook_base_url", "enabled"] {
-            if let Some(value) = merged.remove(key) {
-                constrained.insert(key.to_string(), value);
-            }
-        }
-
-        encode_cbor(&serde_json::Value::Object(constrained))
+        let updated =
+            apply_template_answers(parse_payload(&current_config), parse_payload(&answers));
+        encode_cbor(&updated)
     }
 }
 
@@ -154,6 +131,79 @@ pub fn describe_payload() -> String {
 
 pub fn handle_message(operation: &str, input: &str) -> String {
     format!("{COMPONENT_NAME}::{operation} => {}", input.trim())
+}
+
+#[cfg(any(target_arch = "wasm32", test))]
+fn qa_spec_payload(mode_key: &str) -> serde_json::Value {
+    let asks_template_text = matches!(mode_key, "default" | "setup" | "update");
+    let required = matches!(mode_key, "default" | "setup");
+    let questions = if asks_template_text {
+        vec![serde_json::json!({
+            "id": "text",
+            "label": { "key": "qa.text.label" },
+            "kind": "text",
+            "required": required,
+            "default": { "key": "qa.text.default" }
+        })]
+    } else {
+        Vec::new()
+    };
+
+    serde_json::json!({
+        "mode": mode_key,
+        "title": { "key": format!("qa.{mode_key}.title") },
+        "description": { "key": format!("qa.{mode_key}.description") },
+        "questions": questions,
+        "defaults": {}
+    })
+}
+
+#[cfg(any(target_arch = "wasm32", test))]
+fn extract_template_text_answer(answers: &serde_json::Value) -> Option<String> {
+    if let Some(value) = answers.as_str() {
+        return Some(value.to_string());
+    }
+    let map = answers.as_object()?;
+
+    if let Some(value) = map.get("text").and_then(|v| v.as_str()) {
+        return Some(value.to_string());
+    }
+    if let Some(value) = map.get("template").and_then(|v| v.as_str()) {
+        return Some(value.to_string());
+    }
+    if let Some(value) = map.get("templates.text").and_then(|v| v.as_str()) {
+        return Some(value.to_string());
+    }
+    map.get("templates")
+        .and_then(|v| v.as_object())
+        .and_then(|v| v.get("text"))
+        .and_then(|v| v.as_str())
+        .map(ToOwned::to_owned)
+}
+
+#[cfg(any(target_arch = "wasm32", test))]
+fn apply_template_answers(
+    current_config: serde_json::Value,
+    answers: serde_json::Value,
+) -> serde_json::Value {
+    let mut config = match current_config {
+        serde_json::Value::Object(map) => map,
+        _ => serde_json::Map::new(),
+    };
+
+    if let Some(text) = extract_template_text_answer(&answers) {
+        let mut templates = match config.remove("templates") {
+            Some(serde_json::Value::Object(map)) => map,
+            _ => serde_json::Map::new(),
+        };
+        templates.insert("text".to_string(), serde_json::Value::String(text));
+        config.insert(
+            "templates".to_string(),
+            serde_json::Value::Object(templates),
+        );
+    }
+
+    serde_json::Value::Object(config)
 }
 
 #[cfg(target_arch = "wasm32")]
@@ -216,38 +266,24 @@ fn output_schema() -> SchemaIr {
 #[cfg(target_arch = "wasm32")]
 fn config_schema() -> SchemaIr {
     SchemaIr::Object {
-        properties: BTreeMap::from([
-            (
-                "api_key".to_string(),
-                SchemaIr::String {
-                    min_len: Some(0),
-                    max_len: None,
-                    regex: None,
-                    format: None,
-                },
-            ),
-            (
-                "region".to_string(),
-                SchemaIr::String {
-                    min_len: Some(0),
-                    max_len: None,
-                    regex: None,
-                    format: None,
-                },
-            ),
-            (
-                "webhook_base_url".to_string(),
-                SchemaIr::String {
-                    min_len: Some(0),
-                    max_len: None,
-                    regex: None,
-                    format: None,
-                },
-            ),
-            ("enabled".to_string(), SchemaIr::Bool),
-        ]),
+        properties: BTreeMap::from([(
+            "templates".to_string(),
+            SchemaIr::Object {
+                properties: BTreeMap::from([(
+                    "text".to_string(),
+                    SchemaIr::String {
+                        min_len: Some(0),
+                        max_len: None,
+                        regex: None,
+                        format: None,
+                    },
+                )]),
+                required: vec!["text".to_string()],
+                additional: AdditionalProperties::Allow,
+            },
+        )]),
         required: Vec::new(),
-        additional: AdditionalProperties::Forbid,
+        additional: AdditionalProperties::Allow,
     }
 }
 
@@ -330,5 +366,40 @@ mod tests {
     fn handle_message_round_trips() {
         let body = handle_message("handle", "demo");
         assert!(body.contains("demo"));
+    }
+
+    #[test]
+    fn qa_spec_default_includes_text_question() {
+        let spec = qa_spec_payload("default");
+        let first = spec["questions"]
+            .as_array()
+            .and_then(|v| v.first())
+            .cloned()
+            .unwrap_or_default();
+        assert_eq!(first["id"], "text");
+        assert_eq!(first["label"]["key"], "qa.text.label");
+    }
+
+    #[test]
+    fn apply_answers_sets_templates_text() {
+        let current = serde_json::json!({
+            "templates": {
+                "output_path": "text"
+            }
+        });
+        let answers = serde_json::json!({ "text": "Hi {{name}}" });
+
+        let updated = apply_template_answers(current, answers);
+        assert_eq!(updated["templates"]["text"], "Hi {{name}}");
+        assert_eq!(updated["templates"]["output_path"], "text");
+    }
+
+    #[test]
+    fn apply_answers_supports_nested_templates_text() {
+        let updated = apply_template_answers(
+            serde_json::json!({}),
+            serde_json::json!({ "templates": { "text": "Hello {{name}}" } }),
+        );
+        assert_eq!(updated["templates"]["text"], "Hello {{name}}");
     }
 }
