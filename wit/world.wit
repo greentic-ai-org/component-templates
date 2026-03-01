@@ -16,6 +16,7 @@ interface component-runtime {
     output: list<u8>,
     new-state: list<u8>,
   }
+
   run: func(input: list<u8>, state: list<u8>) -> run-result;
 }
 
@@ -26,6 +27,7 @@ interface component-qa {
     update,
     remove,
   }
+
   qa-spec: func(mode: qa-mode) -> list<u8>;
   apply-answers: func(mode: qa-mode, current-config: list<u8>, answers: list<u8>) -> list<u8>;
 }

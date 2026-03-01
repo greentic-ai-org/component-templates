@@ -1,0 +1,100 @@
+{
+  "info": {
+    "id": "ai.greentic.component-templates",
+    "version": "0.1.13",
+    "role": "tool",
+    "display_name": {
+      "key": "component.display_name",
+      "fallback": "component-templates"
+    }
+  },
+  "provided_capabilities": [],
+  "required_capabilities": [],
+  "metadata": {},
+  "operations": [
+    {
+      "id": "handle_message",
+      "display_name": {
+        "key": "component.operation.handle_message",
+        "fallback": null
+      },
+      "input": {
+        "schema": {
+          "type": "object",
+          "properties": {
+            "input": {
+              "type": "string",
+              "min_len": 0,
+              "max_len": null,
+              "regex": null,
+              "format": null
+            }
+          },
+          "required": [
+            "input"
+          ],
+          "additional": {
+            "type": "allow"
+          }
+        }
+      },
+      "output": {
+        "schema": {
+          "type": "object",
+          "properties": {
+            "message": {
+              "type": "string",
+              "min_len": 0,
+              "max_len": null,
+              "regex": null,
+              "format": null
+            }
+          },
+          "required": [
+            "message"
+          ],
+          "additional": {
+            "type": "allow"
+          }
+        }
+      },
+      "defaults": {},
+      "redactions": [],
+      "constraints": {},
+      "schema_hash": "f483a1da53241da3989df379db093a4dd6a49c9998204c5bdc136c8a57720a25"
+    }
+  ],
+  "config_schema": {
+    "type": "object",
+    "properties": {
+      "api_key": {
+        "type": "string",
+        "min_len": 0,
+        "max_len": null,
+        "regex": null,
+        "format": null
+      },
+      "enabled": {
+        "type": "bool"
+      },
+      "region": {
+        "type": "string",
+        "min_len": 0,
+        "max_len": null,
+        "regex": null,
+        "format": null
+      },
+      "webhook_base_url": {
+        "type": "string",
+        "min_len": 0,
+        "max_len": null,
+        "regex": null,
+        "format": null
+      }
+    },
+    "required": [],
+    "additional": {
+      "type": "forbid"
+    }
+  }
+}

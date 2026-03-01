@@ -1,36 +1,31 @@
+#[path = "src/i18n_bundle.rs"]
+mod i18n_bundle;
+
+use std::env;
 use std::fs;
-use std::path::PathBuf;
+use std::path::Path;
 
+// Build-time embedding pipeline:
+// 1) Read assets/i18n/*.json
+// 2) Pack canonical CBOR bundle
+// 3) Emit OUT_DIR constants included by src/i18n.rs
 fn main() {
-    let manifest_dir = PathBuf::from(std::env::var("CARGO_MANIFEST_DIR").expect("manifest dir"));
-    let locales_path = manifest_dir.join("assets/i18n/locales.json");
-    println!("cargo:rerun-if-changed={}", locales_path.display());
+    let i18n_dir = Path::new("assets/i18n");
+    println!("cargo:rerun-if-changed={}", i18n_dir.display());
 
-    let locales_raw = fs::read_to_string(&locales_path).expect("read locales.json");
-    let mut locales: Vec<String> = serde_json::from_str(&locales_raw).expect("parse locales.json");
-    if !locales.iter().any(|l| l == "en") {
-        locales.push("en".to_string());
-    }
+    let locales = i18n_bundle::load_locale_files(i18n_dir)
+        .unwrap_or_else(|err| panic!("failed to load locale files: {err}"));
+    let bundle = i18n_bundle::pack_locales_to_cbor(&locales)
+        .unwrap_or_else(|err| panic!("failed to pack locale bundle: {err}"));
 
-    let mut generated = String::new();
-    generated.push_str("pub(crate) fn supported_locales() -> &'static [&'static str] {\n    &[\n");
-    for locale in &locales {
-        generated.push_str(&format!("        \"{}\",\n", locale));
-        println!("cargo:rerun-if-changed=assets/i18n/{}.json", locale);
-    }
-    generated.push_str("    ]\n}\n\n");
-    generated.push_str("pub(crate) fn locale_json(locale: &str) -> Option<&'static str> {\n");
-    generated.push_str("    match locale {\n");
-    for locale in &locales {
-        generated.push_str(&format!(
-            "        \"{0}\" => Some(include_str!(concat!(env!(\"CARGO_MANIFEST_DIR\"), \"/assets/i18n/{0}.json\"))),\n",
-            locale
-        ));
-    }
-    generated.push_str("        _ => None,\n");
-    generated.push_str("    }\n");
-    generated.push_str("}\n");
+    let out_dir = env::var("OUT_DIR").expect("OUT_DIR must be set by cargo");
+    let bundle_path = Path::new(&out_dir).join("i18n.bundle.cbor");
+    fs::write(&bundle_path, bundle).expect("write i18n.bundle.cbor");
 
-    let out_path = PathBuf::from(std::env::var("OUT_DIR").expect("out dir")).join("i18n_bundle.rs");
-    fs::write(out_path, generated).expect("write generated i18n bundle");
+    let rs_path = Path::new(&out_dir).join("i18n_bundle.rs");
+    fs::write(
+        &rs_path,
+        "pub const I18N_BUNDLE_CBOR: &[u8] = include_bytes!(concat!(env!(\"OUT_DIR\"), \"/i18n.bundle.cbor\"));\n",
+    )
+    .expect("write i18n_bundle.rs");
 }

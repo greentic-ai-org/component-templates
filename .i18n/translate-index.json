@@ -1,0 +1,28 @@
+{
+  "en_hashes": {
+    "component.display_name": "c669c5fc2802ebfba2e61d764fde54c7f79862f07f33a3dd78ba33ad6de7a4a1",
+    "component.operation.handle_message": "773783331f24fc75dab704e62cc299d97558bcc45852b09e356cdfb9251a4363",
+    "qa.default.title": "a0b083600333164ac42bcb9c2f8d632020eafc03bcf2e60b6d682c050f793710",
+    "qa.default.description": "c660f821e3680e0f0ab470bc76ddaae43c198dcef60ed812f68cd62730ba259f",
+    "qa.setup.title": "581ad581bf76978eba7c1bb9e33f3e4b577d04f3d858d42c4309cc33d85a919d",
+    "qa.setup.description": "1185ae3b27b9375312b5f116f836db5a01679b2fbfb7cca5b004f7445c70188d",
+    "qa.install.title": "7dd059619982d19c06f2963b94918e9b76b42b99595d29d8a4bb9dea36a01cf1",
+    "qa.install.description": "1185ae3b27b9375312b5f116f836db5a01679b2fbfb7cca5b004f7445c70188d",
+    "qa.update.title": "3ffb07838e738f3b9c3241bc26c9ac139ad81bc486ce4ac77e25503c386a78dd",
+    "qa.update.description": "c5c55d08d413316167ea7bfd0d5513e06eb64ab9c99e26e7f0cf6b7143b83a34",
+    "qa.remove.title": "b2556f83e5d49e41e2756993a49c242cb2faa2547cfb0a7be671a3a36ce32ff2",
+    "qa.remove.description": "244ea559c95391a1ebd508d799adbd310363b27b8c6c80b5a69faf1f6ff72717",
+    "qa.field.api_key.label": "16f0ee47f993d6270c9059450473eea493ca8ae037f8877782ae2bc176f24d18",
+    "qa.field.api_key.help": "d8d3265370caa529f48645ad8e096107a57f29a79b188f9465e6a9f46f92a07b",
+    "qa.field.region.label": "d3a008ef1335692d9d045175ba9ea1dcd39ae48da9e2043a9baabad6c3818c28",
+    "qa.field.region.help": "632380581b7c4e46b504c9a2ce151637857671210464817aeba6b7656de83254",
+    "qa.field.webhook_base_url.label": "d40a52f0cf2872665c93f6fc955f5a99cb0822d5359c94780aff8330b9aac2ae",
+    "qa.field.webhook_base_url.help": "49f0d07ce17610801aed211de39fbb1714a496ae810bbc94742d58645a117a8d",
+    "qa.field.enabled.label": "e5307b516122d52738b8cc184b5678de3cc86eb6d78fd4fec7115e620136d1b2",
+    "qa.field.enabled.help": "edb1c7c22d85ec551075ed793bf2261af75cb09f5129207d61690903e0f345c4",
+    "qa.field.confirm_remove.label": "bb0f9ad6dc335c9a511426682bc10069ef7456504c2fd8687df1cc429b6b0302",
+    "qa.field.confirm_remove.help": "4a8a2881cb86d890a0fa8d53dd4a80a00551ecdd0354a9766b324e8334caa5d6",
+    "qa.error.required": "1a186fd6acefd01c5cbcc8f4440f6df276feaccdf92db44a9978083f921c53a6",
+    "qa.error.remove_confirmation": "8ef984afc6f73df46f324369bd32c455ebf1043bcd4a1a28e958ab35127eacb8"
+  }
+}

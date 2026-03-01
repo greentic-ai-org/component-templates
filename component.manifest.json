@@ -26,46 +26,25 @@
     }
   },
   "config_schema": {
-    "$schema": "https://json-schema.org/draft/2020-12/schema",
     "additionalProperties": false,
     "properties": {
-      "templates": {
-        "additionalProperties": false,
-        "properties": {
-          "output_path": {
-            "default": "text",
-            "description": "Dot path where the rendered string is stored",
-            "type": "string",
-            "x-default-applied": true
-          },
-          "routing": {
-            "description": "Optional routing target (defaults to out)",
-            "type": "string"
-          },
-          "text": {
-            "description": "Handlebars template used to render the reply",
-            "type": "string"
-          },
-          "wrap": {
-            "default": true,
-            "description": "Wrap output in an object when true; emit a raw string when false",
-            "type": "boolean",
-            "x-default-applied": true
-          }
-        },
-        "required": [
-          "text"
-        ],
-        "type": "object"
+      "api_key": {
+        "type": "string"
+      },
+      "enabled": {
+        "type": "boolean"
+      },
+      "region": {
+        "type": "string"
+      },
+      "webhook_base_url": {
+        "type": "string"
       }
     },
-    "required": [
-      "templates"
-    ],
-    "title": "templates component configuration",
+    "required": [],
     "type": "object"
   },
-  "default_operation": "text",
+  "default_operation": "handle_message",
   "describe_export": "describe",
   "dev_flows": {
     "custom": {
@@ -114,7 +93,7 @@
             ]
           },
           "emit_config": {
-            "template": "{\n  \"node_id\": \"templates\",\n  \"node\": {\n    \"text\": {\n      \"input\": {\n        \"config\": \"{{state.config}}\",\n        \"connections\": \"{{state.connections}}\",\n        \"msg\": \"{{state.msg}}\",\n        \"payload\": \"{{state.payload}}\"\n      }\n    },\n    \"routing\": [\n      { \"to\": \"NEXT_NODE_PLACEHOLDER\" }\n    ]\n  }\n}"
+            "template": "{\n  \"node_id\": \"component-templates\",\n  \"node\": {\n    \"handle_message\": {\n      \"input\": {\n        \"config\": \"{{state.config}}\",\n        \"connections\": \"{{state.connections}}\",\n        \"msg\": \"{{state.msg}}\",\n        \"payload\": \"{{state.payload}}\"\n      }\n    },\n    \"routing\": [\n      { \"to\": \"NEXT_NODE_PLACEHOLDER\" }\n    ]\n  }\n}"
           }
         }
       }
@@ -127,29 +106,128 @@
         "kind": "component-config",
         "nodes": {
           "emit_config": {
-            "template": "{\n  \"node_id\": \"templates\",\n  \"node\": {\n    \"text\": {\n      \"input\": {\n        \"config\": {\"templates\":{\"text\":\"Hello {{name}}\"}},\n        \"msg\": {},\n        \"payload\": {}\n      }\n    },\n    \"routing\": [\n      { \"to\": \"NEXT_NODE_PLACEHOLDER\" }\n    ]\n  }\n}"
+            "template": "{\n  \"node_id\": \"component-templates\",\n  \"node\": {\n    \"handle_message\": {\n      \"input\": {\n        \"config\": {\"templates\":{\"text\":\"Hello {{name}}\"}},\n        \"msg\": {},\n        \"payload\": {}\n      }\n    },\n    \"routing\": [\n      { \"to\": \"NEXT_NODE_PLACEHOLDER\" }\n    ]\n  }\n}"
           }
         }
       }
     }
   },
   "hashes": {
-    "component_wasm": "blake3:f02c0cbc611035bfb1fcdb02b03a53c7e54283ebf93123d978a7f617c7dd2a87"
+    "component_wasm": "blake3:663d5b8ac09684349bf64c6db533f4cc3888ee10062c2a1feafb44ad9a5d9186"
   },
   "id": "ai.greentic.component-templates",
   "limits": {
     "memory_mb": 128,
     "wall_time_ms": 1000
   },
-  "name": "templates",
+  "name": "component-templates",
   "operations": [
     {
       "input_schema": {
-        "$ref": "schemas/io/input.schema.json"
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "properties": {
+          "input": {
+            "default": "Hello from component-templates!",
+            "description": "Opaque payload forwarded to handle",
+            "type": "string"
+          }
+        },
+        "required": [
+          "input"
+        ],
+        "title": "component-templates handle input",
+        "type": "object"
       },
-      "name": "text",
+      "name": "handle_message",
       "output_schema": {
-        "$ref": "schemas/io/output.schema.json"
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "properties": {
+          "message": {
+            "default": "Handled by component-templates",
+            "description": "Response returned by the handle entry point",
+            "type": "string"
+          }
+        },
+        "required": [
+          "message"
+        ],
+        "title": "component-templates handle output",
+        "type": "object"
+      }
+    },
+    {
+      "input_schema": {
+        "additionalProperties": true,
+        "properties": {
+          "mode": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "name": "qa-spec",
+      "output_schema": {
+        "additionalProperties": true,
+        "properties": {
+          "mode": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      }
+    },
+    {
+      "input_schema": {
+        "additionalProperties": true,
+        "properties": {
+          "answers": {
+            "type": "object"
+          },
+          "current_config": {
+            "type": "object"
+          },
+          "mode": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "name": "apply-answers",
+      "output_schema": {
+        "additionalProperties": false,
+        "properties": {
+          "api_key": {
+            "type": "string"
+          },
+          "enabled": {
+            "type": "boolean"
+          },
+          "region": {
+            "type": "string"
+          },
+          "webhook_base_url": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      }
+    },
+    {
+      "input_schema": {
+        "additionalProperties": true,
+        "properties": {
+          "mode": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "name": "i18n-keys",
+      "output_schema": {
+        "items": {
+          "type": "string"
+        },
+        "type": "array"
       }
     }
   ],
@@ -163,6 +241,6 @@
   "supports": [
     "messaging"
   ],
-  "version": "0.1.2",
+  "version": "0.1.13",
   "world": "greentic:component/component@0.6.0"
 }

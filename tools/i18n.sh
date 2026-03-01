@@ -7,10 +7,12 @@ cd "$ROOT_DIR"
 I18N_DIR="$ROOT_DIR/assets/i18n"
 LOCALES_FILE="$I18N_DIR/locales.json"
 EN_FILE="$I18N_DIR/en.json"
+STATE_FILE="$ROOT_DIR/.i18n/translate-index.json"
 MODE="${1:-all}"
 LOCALE="${LOCALE:-en}"
 AUTH_MODE="${AUTH_MODE:-auto}"
 TRANSLATOR_BIN="${TRANSLATOR_BIN:-greentic-i18n-translator}"
+I18N_INCREMENTAL="${I18N_INCREMENTAL:-1}"
 
 fail() {
   echo "error: $*" >&2
@@ -29,6 +31,7 @@ Environment overrides:
   LOCALE=...          Locale for translator runtime messages (default: en)
   AUTH_MODE=...       Auth mode for translate (default: auto)
   TRANSLATOR_BIN=...  Translator command (default: greentic-i18n-translator)
+  I18N_INCREMENTAL=1  Translate only missing/stale keys (default: 1; set 0 for full en.json)
 USAGE
 }
 
@@ -111,8 +114,9 @@ resolve_translator_bin() {
 }
 
 run_translate() {
+  local en_input="$1"
   "$TRANSLATOR_BIN" --locale "$LOCALE" \
-    translate --langs "$LOCALES_CSV" --en "$EN_FILE" --auth-mode "$AUTH_MODE"
+    translate --langs "$LOCALES_CSV" --en "$en_input" --auth-mode "$AUTH_MODE"
 }
 
 run_validate() {
@@ -175,6 +179,112 @@ print(f"ok: all locale files fully cover en.json ({len(locales)} locales)")
 PY
 }
 
+prepare_incremental_subset() {
+  local subset_file="$1"
+  local next_state_file="$2"
+  python3 - <<'PY' "$I18N_DIR" "$EN_FILE" "$LOCALES_FILE" "$STATE_FILE" "$subset_file" "$next_state_file"
+import hashlib
+import json
+import sys
+from pathlib import Path
+
+i18n_dir = Path(sys.argv[1])
+en_path = Path(sys.argv[2])
+locales_path = Path(sys.argv[3])
+state_path = Path(sys.argv[4])
+subset_path = Path(sys.argv[5])
+next_state_path = Path(sys.argv[6])
+
+en = json.loads(en_path.read_text(encoding="utf-8"))
+if not isinstance(en, dict):
+    print("error: en.json must be a JSON object", file=sys.stderr)
+    sys.exit(1)
+
+locales = json.loads(locales_path.read_text(encoding="utf-8"))
+if not isinstance(locales, list):
+    print("error: locales.json must be a JSON array", file=sys.stderr)
+    sys.exit(1)
+
+state_hashes = {}
+if state_path.exists():
+    try:
+        state_raw = json.loads(state_path.read_text(encoding="utf-8"))
+        if isinstance(state_raw, dict):
+            hashes = state_raw.get("en_hashes")
+            if isinstance(hashes, dict):
+                state_hashes = {str(k): str(v) for k, v in hashes.items()}
+    except Exception:
+        state_hashes = {}
+
+def key_hash(value: str) -> str:
+    return hashlib.sha256(value.encode("utf-8")).hexdigest()
+
+current_hashes = {
+    key: key_hash(value if isinstance(value, str) else str(value))
+    for key, value in en.items()
+}
+
+dirty = set()
+
+# English keys changed since last successful translation run.
+for key, digest in current_hashes.items():
+    if state_hashes.get(key) != digest:
+        dirty.add(key)
+
+# Missing/empty translations are always dirty.
+for locale in locales:
+    locale_path = i18n_dir / f"{locale}.json"
+    if not locale_path.exists():
+        dirty.update(en.keys())
+        continue
+    try:
+        raw = json.loads(locale_path.read_text(encoding="utf-8"))
+    except Exception:
+        raw = {}
+    if not isinstance(raw, dict):
+        dirty.update(en.keys())
+        continue
+    for key in en.keys():
+        if key not in raw:
+            dirty.add(key)
+            continue
+        if str(raw.get(key, "")).strip() == "":
+            dirty.add(key)
+
+dirty_keys = sorted(dirty)
+subset = {key: en[key] for key in dirty_keys}
+subset_path.write_text(
+    json.dumps(subset, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+)
+next_state_path.write_text(
+    json.dumps({"en_hashes": current_hashes}, ensure_ascii=False, indent=2) + "\n",
+    encoding="utf-8",
+)
+print(len(dirty_keys))
+PY
+}
+
+run_translate_incremental() {
+  mkdir -p "$(dirname "$STATE_FILE")"
+  local subset_file
+  subset_file="$(mktemp "$I18N_DIR/.en.incremental.XXXXXX.json")"
+  local next_state_file
+  next_state_file="$(mktemp)"
+  local dirty_count
+  dirty_count="$(prepare_incremental_subset "$subset_file" "$next_state_file")"
+
+  if [[ "$dirty_count" == "0" ]]; then
+    info "no missing/stale keys detected; skipping translate"
+    rm -f "$subset_file" "$next_state_file"
+    return
+  fi
+
+  info "translating incremental subset: $dirty_count key(s)"
+  run_translate "$subset_file"
+  mv "$next_state_file" "$STATE_FILE"
+  rm -f "$subset_file"
+}
+
 if [[ "$MODE" == "-h" || "$MODE" == "--help" ]]; then
   usage
   exit 0
@@ -190,7 +300,11 @@ case "$MODE" in
     ensure_codex_installed
     ensure_codex_login
     resolve_translator_bin
-    run_translate
+    if [[ "$I18N_INCREMENTAL" == "1" ]]; then
+      run_translate_incremental
+    else
+      run_translate "$EN_FILE"
+    fi
     run_validate
     run_status
     check_key_coverage
@@ -201,7 +315,11 @@ case "$MODE" in
     ensure_codex_installed
     ensure_codex_login
     resolve_translator_bin
-    run_translate
+    if [[ "$I18N_INCREMENTAL" == "1" ]]; then
+      run_translate_incremental
+    else
+      run_translate "$EN_FILE"
+    fi
     ;;
   validate)
     ensure_locale_files
