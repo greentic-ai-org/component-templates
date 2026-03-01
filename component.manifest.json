@@ -28,20 +28,31 @@
   "config_schema": {
     "additionalProperties": false,
     "properties": {
-      "api_key": {
-        "type": "string"
-      },
-      "enabled": {
-        "type": "boolean"
-      },
-      "region": {
-        "type": "string"
-      },
-      "webhook_base_url": {
-        "type": "string"
+      "templates": {
+        "additionalProperties": false,
+        "properties": {
+          "output_path": {
+            "type": "string"
+          },
+          "routing": {
+            "type": "string"
+          },
+          "text": {
+            "type": "string"
+          },
+          "wrap": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "text"
+        ],
+        "type": "object"
       }
     },
-    "required": [],
+    "required": [
+      "templates"
+    ],
     "type": "object"
   },
   "default_operation": "handle_message",
@@ -196,19 +207,31 @@
       "output_schema": {
         "additionalProperties": false,
         "properties": {
-          "api_key": {
-            "type": "string"
-          },
-          "enabled": {
-            "type": "boolean"
-          },
-          "region": {
-            "type": "string"
-          },
-          "webhook_base_url": {
-            "type": "string"
+          "templates": {
+            "additionalProperties": false,
+            "properties": {
+              "output_path": {
+                "type": "string"
+              },
+              "routing": {
+                "type": "string"
+              },
+              "text": {
+                "type": "string"
+              },
+              "wrap": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "text"
+            ],
+            "type": "object"
           }
         },
+        "required": [
+          "templates"
+        ],
         "type": "object"
       }
     },
@@ -241,6 +264,6 @@
   "supports": [
     "messaging"
   ],
-  "version": "0.1.15",
+  "version": "0.1.16",
   "world": "greentic:component/component@0.6.0"
 }

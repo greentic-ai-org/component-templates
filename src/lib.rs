@@ -154,7 +154,7 @@ fn qa_spec_payload(mode_key: &str) -> ComponentQaSpec {
     let required = matches!(mode_key, "default" | "setup");
     let questions = if asks_template_text {
         vec![Question {
-            id: "text".to_string(),
+            id: "templates.text".to_string(),
             label: I18nText::new("qa.text.label", None),
             help: None,
             error: None,
@@ -191,6 +191,16 @@ fn extract_template_text_answer(answers: &serde_json::Value) -> Option<String> {
     if let Some(value) = map.get("templates.text").and_then(|v| v.as_str()) {
         return Some(value.to_string());
     }
+    if let Some(value) = map
+        .get("config")
+        .and_then(|v| v.as_object())
+        .and_then(|v| v.get("templates"))
+        .and_then(|v| v.as_object())
+        .and_then(|v| v.get("text"))
+        .and_then(|v| v.as_str())
+    {
+        return Some(value.to_string());
+    }
     map.get("templates")
         .and_then(|v| v.as_object())
         .and_then(|v| v.get("text"))
@@ -203,7 +213,17 @@ fn apply_template_answers(
     current_config: serde_json::Value,
     answers: serde_json::Value,
 ) -> serde_json::Value {
-    let mut config = match current_config {
+    // Compatibility: older flows may send a wrapped object like
+    // { "component": "...", "config": { ... } }. Unwrap to preserve the
+    // component config contract expected by schema validation.
+    let normalized_current_config = current_config
+        .as_object()
+        .and_then(|map| map.get("config"))
+        .and_then(|value| value.as_object())
+        .map(|map| serde_json::Value::Object(map.clone()))
+        .unwrap_or(current_config);
+
+    let mut config = match normalized_current_config {
         serde_json::Value::Object(map) => map,
         _ => serde_json::Map::new(),
     };
@@ -391,7 +411,7 @@ mod tests {
     fn qa_spec_default_includes_text_question() {
         let spec = qa_spec_payload("default");
         let first = spec.questions.first().expect("text question");
-        assert_eq!(first.id, "text");
+        assert_eq!(first.id, "templates.text");
         assert_eq!(first.label.key, "qa.text.label");
     }
 
@@ -404,7 +424,7 @@ mod tests {
             let question = decoded.questions.first().expect("text question");
 
             assert_eq!(decoded.mode.to_string(), mode);
-            assert_eq!(question.id, "text");
+            assert_eq!(question.id, "templates.text");
             assert_eq!(question.required, expected_required);
             assert_eq!(question.label.key, "qa.text.label");
         }
@@ -445,5 +465,24 @@ mod tests {
         assert_eq!(updated["templates"]["text"], "Existing value");
         assert_eq!(updated["templates"]["output_path"], "text");
         assert_eq!(updated, current);
+    }
+
+    #[test]
+    fn apply_answers_unwraps_legacy_wrapped_component_config_shape() {
+        let current = serde_json::json!({
+            "component": "ai.greentic.component-templates",
+            "config": {
+                "templates": {
+                    "text": "Old value",
+                    "output_path": "text"
+                }
+            }
+        });
+
+        let updated = apply_template_answers(current, serde_json::json!({ "text": "New value" }));
+        assert_eq!(updated["templates"]["text"], "New value");
+        assert_eq!(updated["templates"]["output_path"], "text");
+        assert!(updated.get("component").is_none());
+        assert!(updated.get("config").is_none());
     }
 }
