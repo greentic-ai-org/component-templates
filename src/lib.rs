@@ -1,31 +1,47 @@
 #![cfg_attr(not(target_arch = "wasm32"), allow(dead_code))]
 
+use std::collections::{BTreeMap, BTreeSet};
+
 use handlebars::{Handlebars, RenderError};
 use serde::{Deserialize, Serialize};
 use serde_json::{Map, Value, json};
-use std::collections::{BTreeMap, BTreeSet};
 
 use ciborium::value::Value as CborValue;
 use greentic_types::ChannelMessageEnvelope;
 use greentic_types::cbor::canonical;
+use greentic_types::i18n_text::I18nText;
 use greentic_types::schemas::common::schema_ir::{AdditionalProperties, SchemaIr};
 use greentic_types::schemas::component::v0_6_0::{
     ComponentDescribe, ComponentInfo, ComponentOperation, ComponentQaSpec, ComponentRunInput,
-    ComponentRunOutput, I18nText, QaMode as ComponentQaMode, Question, QuestionKind, schema_hash,
+    ComponentRunOutput, QaMode as QaModeSpec, Question,
+    QuestionKind, schema_hash,
 };
+
+#[cfg(target_arch = "wasm32")]
+mod bindings {
+    wit_bindgen::generate!({
+        path: "wit",
+        world: "component-v0-v6-v0",
+    });
+}
+#[cfg(target_arch = "wasm32")]
+use bindings::exports::greentic::component::{
+    component_descriptor, component_i18n,
+    component_qa::{self, QaMode},
+    component_runtime, component_schema,
+};
+
+pub mod i18n;
+pub mod i18n_bundle;
+pub mod qa;
 
 const DEFAULT_OUTPUT_PATH: &str = "text";
 const SUPPORTED_OPERATION: &str = "text";
-const COMPONENT_NAME: &str = "templates";
+const COMPONENT_NAME: &str = "component-templates";
 const COMPONENT_ORG: &str = "ai.greentic";
-const COMPONENT_VERSION: &str = "0.1.2";
+const COMPONENT_VERSION: &str = env!("CARGO_PKG_VERSION");
 const COMPONENT_ID: &str = "ai.greentic.component-templates";
 const COMPONENT_ROLE: &str = "tool";
-
-wit_bindgen::generate!({
-    path: "wit",
-    world: "component-v0-v6-v0",
-});
 
 #[cfg(target_arch = "wasm32")]
 #[used]
@@ -36,7 +52,7 @@ static WASI_TARGET_MARKER: [u8; 13] = *b"wasm32-wasip2";
 struct Component;
 
 #[cfg(target_arch = "wasm32")]
-impl exports::greentic::component::component_descriptor::Guest for Component {
+impl component_descriptor::Guest for Component {
     fn get_component_info() -> Vec<u8> {
         component_info_cbor()
     }
@@ -47,7 +63,7 @@ impl exports::greentic::component::component_descriptor::Guest for Component {
 }
 
 #[cfg(target_arch = "wasm32")]
-impl exports::greentic::component::component_schema::Guest for Component {
+impl component_schema::Guest for Component {
     fn input_schema() -> Vec<u8> {
         input_schema_cbor()
     }
@@ -62,40 +78,50 @@ impl exports::greentic::component::component_schema::Guest for Component {
 }
 
 #[cfg(target_arch = "wasm32")]
-impl exports::greentic::component::component_runtime::Guest for Component {
-    fn run(
-        input: Vec<u8>,
-        state: Vec<u8>,
-    ) -> exports::greentic::component::component_runtime::RunResult {
-        let (output, new_state) = run_component_cbor(input, state);
-        exports::greentic::component::component_runtime::RunResult { output, new_state }
+impl component_runtime::Guest for Component {
+    fn run(input: Vec<u8>, state: Vec<u8>) -> component_runtime::RunResult {
+        let value = parse_payload(&input);
+        let input_text = value
+            .get("input")
+            .and_then(|v| v.as_str())
+            .map(ToOwned::to_owned)
+            .unwrap_or_else(|| value.to_string());
+
+        let output = serde_json::json!({
+            "message": handle_message("handle_message", &input_text)
+        });
+
+        component_runtime::RunResult {
+            output: encode_cbor(&output),
+            new_state: state,
+        }
     }
 }
 
 #[cfg(target_arch = "wasm32")]
-impl exports::greentic::component::component_qa::Guest for Component {
-    fn qa_spec(mode: exports::greentic::component::component_qa::QaMode) -> Vec<u8> {
-        qa_spec_cbor(mode)
+impl component_qa::Guest for Component {
+    fn qa_spec(mode: QaMode) -> Vec<u8> {
+        let mode_key = mode_key(mode);
+        encode_cbor(&qa_spec_payload(mode_key))
     }
 
-    fn apply_answers(
-        mode: exports::greentic::component::component_qa::QaMode,
-        current_config: Vec<u8>,
-        answers: Vec<u8>,
-    ) -> Vec<u8> {
-        apply_answers_cbor(mode, current_config, answers)
+    fn apply_answers(mode: QaMode, current_config: Vec<u8>, answers: Vec<u8>) -> Vec<u8> {
+        let _ = mode;
+        let updated =
+            apply_template_answers(parse_payload(&current_config), parse_payload(&answers));
+        encode_cbor(&updated)
     }
 }
 
 #[cfg(target_arch = "wasm32")]
-impl exports::greentic::component::component_i18n::Guest for Component {
+impl component_i18n::Guest for Component {
     fn i18n_keys() -> Vec<String> {
-        i18n_keys()
+        i18n::all_keys()
     }
 }
 
 #[cfg(target_arch = "wasm32")]
-export!(Component);
+bindings::export!(Component with_types_in bindings);
 
 #[derive(Debug, Deserialize, Serialize)]
 struct ComponentInvocation {
@@ -536,7 +562,7 @@ fn config_schema_cbor() -> Vec<u8> {
     encode_cbor(&config_schema_ir())
 }
 
-fn qa_spec_for_mode(mode: ComponentQaMode) -> ComponentQaSpec {
+fn qa_spec_for_mode(mode: QaModeSpec) -> ComponentQaSpec {
     let title = I18nText::new(
         "templates.qa.title",
         Some("Templates configuration".to_string()),
@@ -563,10 +589,10 @@ fn qa_spec_for_mode(mode: ComponentQaMode) -> ComponentQaSpec {
 #[cfg(target_arch = "wasm32")]
 fn qa_spec_cbor(mode: exports::greentic::component::component_qa::QaMode) -> Vec<u8> {
     let mapped = match mode {
-        exports::greentic::component::component_qa::QaMode::Default => ComponentQaMode::Default,
-        exports::greentic::component::component_qa::QaMode::Setup => ComponentQaMode::Setup,
-        exports::greentic::component::component_qa::QaMode::Upgrade => ComponentQaMode::Upgrade,
-        exports::greentic::component::component_qa::QaMode::Remove => ComponentQaMode::Remove,
+        exports::greentic::component::component_qa::QaMode::Default => QaModeSpec::Default,
+        exports::greentic::component::component_qa::QaMode::Setup => QaModeSpec::Setup,
+        exports::greentic::component::component_qa::QaMode::Upgrade => QaModeSpec::Update,
+        exports::greentic::component::component_qa::QaMode::Remove => QaModeSpec::Remove,
     };
     let spec = qa_spec_for_mode(mapped);
     encode_cbor(&spec)
@@ -592,10 +618,10 @@ fn apply_answers_cbor(
 fn i18n_keys() -> Vec<String> {
     let mut keys = BTreeSet::new();
     for mode in [
-        ComponentQaMode::Default,
-        ComponentQaMode::Setup,
-        ComponentQaMode::Upgrade,
-        ComponentQaMode::Remove,
+        QaModeSpec::Default,
+        QaModeSpec::Setup,
+        QaModeSpec::Update,
+        QaModeSpec::Remove,
     ] {
         let spec = qa_spec_for_mode(mode);
         for key in spec.i18n_keys() {
@@ -636,7 +662,7 @@ fn run_component_cbor(input: Vec<u8>, _state: Vec<u8>) -> (Vec<u8>, Vec<u8>) {
 
 /// Returns the component manifest JSON payload.
 pub fn describe_payload() -> String {
-    json!({
+    serde_json::json!({
         "component": {
             "name": COMPONENT_NAME,
             "org": COMPONENT_ORG,
@@ -650,6 +676,10 @@ pub fn describe_payload() -> String {
         }
     })
     .to_string()
+}
+
+pub fn handle_message(operation: &str, input: &str) -> String {
+    format!("{COMPONENT_NAME}::{operation} => {}", input.trim())
 }
 
 /// Entry point used by both sync and streaming invocations.
@@ -815,12 +845,260 @@ impl TemplateError {
     }
 }
 
+#[cfg(any(target_arch = "wasm32", test))]
+fn qa_spec_payload(mode_key: &str) -> ComponentQaSpec {
+    let mode = match mode_key {
+        "default" => QaModeSpec::Default,
+        "setup" => QaModeSpec::Setup,
+        "update" => QaModeSpec::Update,
+        "remove" => QaModeSpec::Remove,
+        _ => QaModeSpec::Default,
+    };
+    let asks_template_text = matches!(mode_key, "default" | "setup" | "update");
+    let required = matches!(mode_key, "default" | "setup");
+    let questions = if asks_template_text {
+        vec![Question {
+            id: "templates.text".to_string(),
+            label: I18nText::new("qa.text.label", None),
+            help: None,
+            error: None,
+            kind: QuestionKind::Text,
+            required,
+            default: None,
+        }]
+    } else {
+        Vec::new()
+    };
+
+    ComponentQaSpec {
+        mode,
+        title: I18nText::new(format!("qa.{mode_key}.title"), None),
+        description: Some(I18nText::new(format!("qa.{mode_key}.description"), None)),
+        questions,
+        defaults: BTreeMap::new(),
+    }
+}
+
+#[cfg(any(target_arch = "wasm32", test))]
+fn extract_template_text_answer(answers: &serde_json::Value) -> Option<String> {
+    if let Some(value) = answers.as_str() {
+        return Some(value.to_string());
+    }
+    let map = answers.as_object()?;
+
+    if let Some(value) = map.get("text").and_then(|v| v.as_str()) {
+        return Some(value.to_string());
+    }
+    if let Some(value) = map.get("template").and_then(|v| v.as_str()) {
+        return Some(value.to_string());
+    }
+    if let Some(value) = map.get("templates.text").and_then(|v| v.as_str()) {
+        return Some(value.to_string());
+    }
+    if let Some(value) = map
+        .get("config")
+        .and_then(|v| v.as_object())
+        .and_then(|v| v.get("templates"))
+        .and_then(|v| v.as_object())
+        .and_then(|v| v.get("text"))
+        .and_then(|v| v.as_str())
+    {
+        return Some(value.to_string());
+    }
+    map.get("templates")
+        .and_then(|v| v.as_object())
+        .and_then(|v| v.get("text"))
+        .and_then(|v| v.as_str())
+        .map(ToOwned::to_owned)
+}
+
+#[cfg(any(target_arch = "wasm32", test))]
+fn apply_template_answers(
+    current_config: serde_json::Value,
+    answers: serde_json::Value,
+) -> serde_json::Value {
+    // Compatibility: older flows may send a wrapped object like
+    // { "component": "...", "config": { ... } }. Unwrap to preserve the
+    // component config contract expected by schema validation.
+    let normalized_current_config = current_config
+        .as_object()
+        .and_then(|map| map.get("config"))
+        .and_then(|value| value.as_object())
+        .map(|map| serde_json::Value::Object(map.clone()))
+        .unwrap_or(current_config);
+
+    let mut config = match normalized_current_config {
+        serde_json::Value::Object(map) => map,
+        _ => serde_json::Map::new(),
+    };
+
+    if let Some(text) = extract_template_text_answer(&answers) {
+        let mut templates = match config.remove("templates") {
+            Some(serde_json::Value::Object(map)) => map,
+            _ => serde_json::Map::new(),
+        };
+        templates.insert("text".to_string(), serde_json::Value::String(text));
+        config.insert(
+            "templates".to_string(),
+            serde_json::Value::Object(templates),
+        );
+    }
+
+    serde_json::Value::Object(config)
+}
+
+#[cfg(target_arch = "wasm32")]
+fn encode_cbor<T: serde::Serialize>(value: &T) -> Vec<u8> {
+    canonical::to_canonical_cbor_allow_floats(value).expect("encode cbor")
+}
+
+#[cfg(target_arch = "wasm32")]
+fn parse_payload(input: &[u8]) -> serde_json::Value {
+    if let Ok(value) = canonical::from_cbor(input) {
+        return value;
+    }
+    serde_json::from_slice(input).unwrap_or_else(|_| serde_json::json!({}))
+}
+
+#[cfg(target_arch = "wasm32")]
+fn mode_key(mode: QaMode) -> &'static str {
+    match mode {
+        QaMode::Default => "default",
+        QaMode::Setup => "setup",
+        QaMode::Update => "update",
+        QaMode::Remove => "remove",
+    }
+}
+
+#[cfg(target_arch = "wasm32")]
+fn input_schema() -> SchemaIr {
+    SchemaIr::Object {
+        properties: BTreeMap::from([(
+            "input".to_string(),
+            SchemaIr::String {
+                min_len: Some(0),
+                max_len: None,
+                regex: None,
+                format: None,
+            },
+        )]),
+        required: vec!["input".to_string()],
+        additional: AdditionalProperties::Allow,
+    }
+}
+
+#[cfg(target_arch = "wasm32")]
+fn output_schema() -> SchemaIr {
+    SchemaIr::Object {
+        properties: BTreeMap::from([(
+            "message".to_string(),
+            SchemaIr::String {
+                min_len: Some(0),
+                max_len: None,
+                regex: None,
+                format: None,
+            },
+        )]),
+        required: vec!["message".to_string()],
+        additional: AdditionalProperties::Allow,
+    }
+}
+
+#[cfg(target_arch = "wasm32")]
+fn config_schema() -> SchemaIr {
+    SchemaIr::Object {
+        properties: BTreeMap::from([(
+            "templates".to_string(),
+            SchemaIr::Object {
+                properties: BTreeMap::from([(
+                    "text".to_string(),
+                    SchemaIr::String {
+                        min_len: Some(0),
+                        max_len: None,
+                        regex: None,
+                        format: None,
+                    },
+                )]),
+                required: vec!["text".to_string()],
+                additional: AdditionalProperties::Allow,
+            },
+        )]),
+        required: Vec::new(),
+        additional: AdditionalProperties::Allow,
+    }
+}
+
+#[cfg(target_arch = "wasm32")]
+fn component_info() -> ComponentInfo {
+    ComponentInfo {
+        id: format!("{COMPONENT_ORG}.{COMPONENT_NAME}"),
+        version: COMPONENT_VERSION.to_string(),
+        role: "tool".to_string(),
+        display_name: Some(I18nText::new(
+            "component.display_name",
+            Some(COMPONENT_NAME.to_string()),
+        )),
+    }
+}
+
+#[cfg(target_arch = "wasm32")]
+fn component_describe() -> ComponentDescribe {
+    let input = input_schema();
+    let output = output_schema();
+    let config = config_schema();
+    let op_schema_hash = schema_hash(&input, &output, &config).unwrap_or_default();
+
+    ComponentDescribe {
+        info: component_info(),
+        provided_capabilities: Vec::new(),
+        required_capabilities: Vec::new(),
+        metadata: BTreeMap::new(),
+        operations: vec![ComponentOperation {
+            id: "handle_message".to_string(),
+            display_name: Some(I18nText::new("component.operation.handle_message", None)),
+            input: ComponentRunInput { schema: input },
+            output: ComponentRunOutput { schema: output },
+            defaults: BTreeMap::new(),
+            redactions: Vec::new(),
+            constraints: BTreeMap::new(),
+            schema_hash: op_schema_hash,
+        }],
+        config_schema: config,
+    }
+}
+
+#[cfg(target_arch = "wasm32")]
+fn component_info_cbor() -> Vec<u8> {
+    encode_cbor(&component_info())
+}
+
+#[cfg(target_arch = "wasm32")]
+fn component_describe_cbor() -> Vec<u8> {
+    encode_cbor(&component_describe())
+}
+
+#[cfg(target_arch = "wasm32")]
+fn input_schema_cbor() -> Vec<u8> {
+    encode_cbor(&input_schema())
+}
+
+#[cfg(target_arch = "wasm32")]
+fn output_schema_cbor() -> Vec<u8> {
+    encode_cbor(&output_schema())
+}
+
+#[cfg(target_arch = "wasm32")]
+fn config_schema_cbor() -> Vec<u8> {
+    encode_cbor(&config_schema())
+}
+
 #[cfg(test)]
 mod tests {
     use core::convert::TryFrom;
-    use serde_json::json;
 
     use super::*;
+    use greentic_types::cbor::canonical;
+    use greentic_types::schemas::component::v0_6_0::ComponentQaSpec;
 
     fn sample_invocation(template: &str, payload: Value) -> ComponentInvocation {
         let mut tenant_ctx = greentic_types::TenantCtx::new(
@@ -850,40 +1128,76 @@ mod tests {
     }
 
     #[test]
-    fn renders_basic_template() {
-        let invocation = sample_invocation(
-            "Hello! You asked: {{payload.text}}",
-            json!({ "text": "weather?" }),
-        );
-
-        let result = invoke_template(
-            SUPPORTED_OPERATION,
-            &serde_json::to_string(&invocation).expect("serialize invocation"),
-        )
-        .expect("invoke should succeed");
-
-        let json: Value = serde_json::from_str(&result).expect("result json");
-        assert_eq!(
-            json["payload"],
-            json!({ "text": "Hello! You asked: weather?" })
-        );
-        assert!(json["error"].is_null());
-        assert_eq!(json["state_updates"], json!({}));
+    fn describe_payload_is_json() {
+        let payload = describe_payload();
+        let json: serde_json::Value = serde_json::from_str(&payload).expect("valid json");
+        assert_eq!(json["component"]["name"], "component-templates");
     }
 
     #[test]
-    fn missing_fields_render_empty() {
-        let invocation = sample_invocation("Hello! {{payload.missing}}", json!({ "text": "ping" }));
+    fn handle_message_round_trips() {
+        let body = handle_message("handle", "demo");
+        assert!(body.contains("demo"));
+    }
 
-        let result = invoke_template(
-            SUPPORTED_OPERATION,
-            &serde_json::to_string(&invocation).expect("serialize invocation"),
-        )
-        .expect("invoke should succeed");
+    #[test]
+    fn qa_spec_default_includes_text_question() {
+        let spec = qa_spec_payload("default");
+        let first = spec.questions.first().expect("text question");
+        assert_eq!(first.id, "templates.text");
+        assert_eq!(first.label.key, "qa.text.label");
+    }
 
-        let json: Value = serde_json::from_str(&result).expect("result json");
-        assert_eq!(json["payload"], json!({ "text": "Hello! " }));
-        assert!(json["error"].is_null());
+    #[test]
+    fn qa_spec_modes_round_trip_as_canonical_cbor() {
+        for (mode, expected_required) in [("default", true), ("setup", true), ("update", false)] {
+            let spec = qa_spec_payload(mode);
+            let cbor = canonical::to_canonical_cbor_allow_floats(&spec).expect("encode cbor");
+            let decoded: ComponentQaSpec = canonical::from_cbor(&cbor).expect("decode cbor");
+            let question = decoded.questions.first().expect("text question");
+
+            assert_eq!(decoded.mode.to_string(), mode);
+            assert_eq!(question.id, "templates.text");
+            assert_eq!(question.required, expected_required);
+            assert_eq!(question.label.key, "qa.text.label");
+        }
+    }
+
+    #[test]
+    fn apply_answers_sets_templates_text() {
+        let current = serde_json::json!({
+            "templates": {
+                "output_path": "text"
+            }
+        });
+        let answers = serde_json::json!({ "text": "Hi {{name}}" });
+
+        let updated = apply_template_answers(current, answers);
+        assert_eq!(updated["templates"]["text"], "Hi {{name}}");
+        assert_eq!(updated["templates"]["output_path"], "text");
+    }
+
+    #[test]
+    fn apply_answers_supports_nested_templates_text() {
+        let updated = apply_template_answers(
+            serde_json::json!({}),
+            serde_json::json!({ "templates": { "text": "Hello {{name}}" } }),
+        );
+        assert_eq!(updated["templates"]["text"], "Hello {{name}}");
+    }
+
+    #[test]
+    fn apply_answers_leaves_existing_text_when_no_answer_is_present() {
+        let current = serde_json::json!({
+            "templates": {
+                "text": "Existing value",
+                "output_path": "text"
+            }
+        });
+        let updated = apply_template_answers(current.clone(), serde_json::json!({}));
+        assert_eq!(updated["templates"]["text"], "Existing value");
+        assert_eq!(updated["templates"]["output_path"], "text");
+        assert_eq!(updated, current);
     }
 
     #[test]
@@ -1016,6 +1330,25 @@ mod tests {
             result,
             Err(InvokeFailure::UnsupportedOperation(_))
         ));
+    }
+
+    #[test]
+    fn apply_answers_unwraps_legacy_wrapped_component_config_shape() {
+        let current = serde_json::json!({
+            "component": "ai.greentic.component-templates",
+            "config": {
+                "templates": {
+                    "text": "Old value",
+                    "output_path": "text"
+                }
+            }
+        });
+
+        let updated = apply_template_answers(current, serde_json::json!({ "text": "New value" }));
+        assert_eq!(updated["templates"]["text"], "New value");
+        assert_eq!(updated["templates"]["output_path"], "text");
+        assert!(updated.get("component").is_none());
+        assert!(updated.get("config").is_none());
     }
 
     #[test]

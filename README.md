@@ -7,7 +7,7 @@ Greentic templating node powered by Handlebars. The only exposed operation is `t
 
 ## Requirements
 
-- Rust 1.89+
+- Rust 1.91+
 - `wasm32-wasip2` target (`rustup target add wasm32-wasip2`)
 
 ## Usage
