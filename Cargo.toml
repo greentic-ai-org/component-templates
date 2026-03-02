@@ -22,6 +22,8 @@ world = "greentic:component/component-v0-v6-v0@0.6.0"
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 greentic-types = { version = "0.4" }
+handlebars = "6"
+ciborium = "0.2"
 
 [dev-dependencies]
 serde_json = "1"
