@@ -2,7 +2,7 @@ name: CI
 
 on:
   push:
-    branches: ["main", "master"]
+    branches: ["main"]
   pull_request:
 
 permissions:
@@ -35,7 +35,7 @@ jobs:
             cargo build --target wasm32-wasip2 --release
           fi
       - name: Prepare publish artifacts
-        if: github.ref == 'refs/heads/master'
+        if: github.ref == 'refs/heads/main'
         run: |
           WASM_PATH="$(find target -type f -name component_templates.wasm ! -path '*/deps/*' | head -n1)"
           if [ -z "${WASM_PATH}" ]; then
@@ -61,15 +61,15 @@ jobs:
           PY
           ls -l component_templates.wasm component.publish.manifest.json
       - name: Install ORAS
-        if: github.ref == 'refs/heads/master'
+        if: github.ref == 'refs/heads/main'
         uses: oras-project/setup-oras@v1
       - name: Login to GHCR
-        if: github.ref == 'refs/heads/master'
+        if: github.ref == 'refs/heads/main'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: echo "${GITHUB_TOKEN}" | oras login ghcr.io -u "${GITHUB_ACTOR}" --password-stdin
       - name: Push OCI artifact to GHCR
-        if: github.ref == 'refs/heads/master'
+        if: github.ref == 'refs/heads/main'
         env:
           IMAGE: ghcr.io/${{ github.repository_owner }}/components/templates
         run: |
