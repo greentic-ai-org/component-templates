@@ -161,6 +161,7 @@ fn qa_spec_payload(mode_key: &str) -> ComponentQaSpec {
             kind: QuestionKind::Text,
             required,
             default: None,
+            skip_if: None,
         }]
     } else {
         Vec::new()
