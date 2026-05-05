@@ -142,6 +142,7 @@ fn question(id: &str, label_key: &str, help_key: &str, required: bool) -> Questi
         kind: QuestionKind::Text,
         required,
         default: None,
+        skip_if: None,
     }
 }
 
