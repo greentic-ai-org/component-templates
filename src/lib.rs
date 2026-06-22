@@ -361,6 +361,7 @@ fn component_describe() -> ComponentDescribe {
             schema_hash: op_schema_hash,
         }],
         config_schema: config,
+        outcomes: Vec::new(),
     }
 }
 
