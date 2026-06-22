@@ -255,9 +255,9 @@ checksum = "77ce24cb58228fbb8aa041425bb1050850ac19177686ea6e0f41a70416f56fdb"
 
 [[package]]
 name = "greentic-types"
-version = "1.1.0-dev.26386264344"
+version = "1.1.0-dev.27836473437"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d00c6caeb8594e122de72690567bee7ad622bd795a58b9d76cd8aa48ec1e5e83"
+checksum = "a8c40256c6908985ab2bfc60026cab7a3971bbbb5f18d7303f2fffb070f14f39"
 dependencies = [
  "anyhow",
  "blake3",
