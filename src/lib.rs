@@ -161,6 +161,7 @@ fn qa_spec_payload(mode_key: &str) -> ComponentQaSpec {
             kind: QuestionKind::Text,
             required,
             default: None,
+            skip_if: None,
         }]
     } else {
         Vec::new()
@@ -360,6 +361,7 @@ fn component_describe() -> ComponentDescribe {
             schema_hash: op_schema_hash,
         }],
         config_schema: config,
+        outcomes: Vec::new(),
     }
 }
 

@@ -1,16 +1,15 @@
 [package]
 name = "component-templates"
-version = "0.1.16"
+version = "0.2.0"
 edition = "2024"
 license = "MIT"
 rust-version = "1.91"
 description = "Greentic component component-templates"
 repository = "https://github.com/component-templates"
 build = "build.rs"
-authors = ["maarten"]
-
-[lib]
-crate-type = ["cdylib", "rlib"]
+authors = [
+    "maarten",
+]
 
 [package.metadata.component]
 package = "greentic:component"
@@ -18,18 +17,40 @@ package = "greentic:component"
 [package.metadata.component.target]
 world = "greentic:component/component-v0-v6-v0@0.6.0"
 
+[lib]
+crate-type = [
+    "cdylib",
+    "rlib",
+]
+
 [dependencies]
-serde = { version = "1", features = ["derive"] }
 serde_json = "1"
-greentic-types = { version = "0.4" }
+
+[dependencies.serde]
+version = "1"
+features = [
+    "derive",
+]
+
+[dependencies.greentic-types]
+version = ">=1.1.0-dev, <1.2.0-0"
 
 [dev-dependencies]
 serde_json = "1"
 
 [build-dependencies]
 serde_json = "1"
-greentic-types = { version = "0.4" }
 
-[target.'cfg(target_arch = "wasm32")'.dependencies]
-greentic-types = { version = "0.4" }
-wit-bindgen = { version = "0.53", default-features = false, features = ["macros", "realloc"] }
+[build-dependencies.greentic-types]
+version = ">=1.1.0-dev, <1.2.0-0"
+
+[target."cfg(target_arch = \"wasm32\")".dependencies.greentic-types]
+version = ">=1.1.0-dev, <1.2.0-0"
+
+[target."cfg(target_arch = \"wasm32\")".dependencies.wit-bindgen]
+version = "0.53"
+default-features = false
+features = [
+    "macros",
+    "realloc",
+]
