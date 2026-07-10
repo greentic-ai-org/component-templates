@@ -116,7 +116,7 @@ dependencies = [
 
 [[package]]
 name = "component-templates"
-version = "0.1.16"
+version = "0.2.0"
 dependencies = [
  "greentic-types",
  "serde",
@@ -255,9 +255,9 @@ checksum = "77ce24cb58228fbb8aa041425bb1050850ac19177686ea6e0f41a70416f56fdb"
 
 [[package]]
 name = "greentic-types"
-version = "1.1.0-dev.27836473437"
+version = "1.1.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a8c40256c6908985ab2bfc60026cab7a3971bbbb5f18d7303f2fffb070f14f39"
+checksum = "853321f6d463c7a805821fb54a126cc44d50a1b3ffb009f14718d34e158799cf"
 dependencies = [
  "anyhow",
  "blake3",
